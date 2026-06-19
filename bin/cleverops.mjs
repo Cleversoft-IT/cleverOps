@@ -26,11 +26,21 @@ const listSkills = () => fs.existsSync(SKILLS_DIR)
 const listAgents = () => fs.existsSync(AGENTS_DIR)
   ? fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).sort() : [];
 
+// Home configurabili via env (come fa skills.sh): rispetta installazioni non standard.
+const CLAUDE_HOME = process.env.CLAUDE_CONFIG_DIR?.trim() || join(HOME, '.claude');
+const CODEX_HOME  = process.env.CODEX_HOME?.trim() || join(HOME, '.codex');
+
 const TARGET_DIRS = {
-  claude:  { skills: join(HOME, '.claude', 'skills'),  agents: join(HOME, '.claude', 'agents') },
-  codex:   { skills: join(HOME, '.codex', 'skills'),   agents: join(HOME, '.codex', 'agents') },
+  claude:  { skills: join(CLAUDE_HOME, 'skills'),  agents: join(CLAUDE_HOME, 'agents') },
+  codex:   { skills: join(CODEX_HOME, 'skills'),   agents: join(CODEX_HOME, 'agents') },
 };
 const projectDirs = (p) => ({ skills: join(p, '.claude', 'skills'), agents: join(p, '.claude', 'agents') });
+
+// Detection harness installati: basta controllare i path noti (ispirato a skills.sh).
+const detectHarness = () => ({
+  claude: fs.existsSync(CLAUDE_HOME),
+  codex:  fs.existsSync(CODEX_HOME),
+});
 
 // ---------- arg parsing (non interattivo) ----------
 function parseArgs(argv) {
@@ -189,6 +199,11 @@ function skillHint(name) {
 async function interactive(uninstall) {
   intro(uninstall ? 'cleverOps — rimozione' : 'cleverOps — installer');
 
+  // Detection: quali harness sono installati su questa macchina
+  const det = detectHarness();
+  const detList = [det.claude && 'Claude Code', det.codex && 'Codex'].filter(Boolean);
+  note(detList.length ? detList.join(', ') : 'nessuno trovato (scegli tu dove)', 'Harness rilevati');
+
   // 1) COSA — skill, agent ed extra sono tutti scelte di prima classe
   const skills = bail(await multiselect({
     message: uninstall ? 'Quali skill rimuovere?' : 'Quali skill installare?',
@@ -222,14 +237,15 @@ async function interactive(uninstall) {
   const needPlacement = skills.length > 0 || agents.length > 0;
   let targets = [], project = process.cwd(), mode = 'copy';
   if (needPlacement) {
+    const preselect = [det.claude && 'claude', det.codex && 'codex'].filter(Boolean);
     targets = bail(await multiselect({
       message: 'Dove installo skill e agent?',
       options: [
-        { value: 'claude', label: 'Claude Code (utente)', hint: '~/.claude' },
-        { value: 'codex', label: 'Codex (utente)', hint: '~/.codex' },
+        { value: 'claude', label: 'Claude Code (utente)', hint: det.claude ? '~/.claude · rilevato' : '~/.claude · non rilevato' },
+        { value: 'codex', label: 'Codex (utente)', hint: det.codex ? '~/.codex · rilevato' : '~/.codex · non rilevato' },
         { value: 'project', label: 'Progetto', hint: 'cartella corrente → .claude/' },
       ],
-      initialValues: ['claude', 'codex'],
+      initialValues: preselect.length ? preselect : ['claude'],
       required: true,
     }));
     if (targets.includes('project')) {
