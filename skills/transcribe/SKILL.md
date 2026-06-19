@@ -1,0 +1,59 @@
+---
+name: transcribe
+description: Trascrive file audio (mp3, wav, m4a, mp4...) in testo con Whisper locale, ripulendo e formattando il risultato in paragrafi leggibili. Usa quando l'utente vuole trascrivere un file audio, una registrazione vocale o una call con un cliente.
+argument-hint: <percorso-file-audio> [--format md] [--timestamps]
+allowed-tools: Bash, Read, Write
+---
+
+# Transcribe
+
+Trascrive un file audio in testo usando Whisper in locale e ne restituisce
+una versione **già ripulita e impaginata** (paragrafi, punteggiatura
+normalizzata, filler rimossi), non un blob di testo grezzo.
+
+## Quando usarla
+
+- "trascrivi questa registrazione / questa call / questo vocale"
+- conversione di un mp3/m4a/mp4 in appunti testuali
+- preparazione di un verbale o di una sintesi a partire da un audio
+
+## Come eseguire
+
+Lo script vive in `scripts/transcribe.py` dentro questa skill e gira con
+l'interprete dedicato `~/.whisper-env/bin/python` (Whisper preinstallato).
+
+1. Verifica che il file in `$ARGUMENTS` esista.
+2. Esegui (sostituisci `<SKILL_DIR>` con la cartella di questa skill, es.
+   `~/.claude/skills/transcribe` o `~/.codex/skills/transcribe`):
+
+   ```bash
+   ~/.whisper-env/bin/python "<SKILL_DIR>/scripts/transcribe.py" "$ARGUMENTS"
+   ```
+
+3. Mostra all'utente il percorso del file generato e un'anteprima delle
+   prime righe.
+
+## Opzioni utili
+
+| Opzione | Effetto |
+|---|---|
+| `--format md` | output Markdown con intestazione (file, modello, durata) |
+| `--timestamps` | prefissa ogni paragrafo con `[mm:ss]` |
+| `--model large` | qualità maggiore, più lento (default `medium`) |
+| `--language en` | lingua diversa dall'italiano (default `it`) |
+| `--raw` | testo grezzo Whisper senza pulizia/segmentazione |
+| `--output PATH` | percorso file di output personalizzato |
+
+Lo `stdout` dello script è **solo il path** del file prodotto (i messaggi
+di avanzamento vanno su stderr), così è componibile in pipeline.
+
+## Note
+
+- Formati audio/video supportati: tutto ciò che `ffmpeg` sa decodificare
+  (mp3, wav, m4a, ogg, mp4, mov...).
+- La pulizia è **conservativa**: rimuove spazi doppi, filler isolati
+  ("ehm", "uhm"...), ripetizioni immediate e sistema la punteggiatura,
+  senza riscrivere o riassumere il contenuto. Per una sintesi, trascrivi
+  e poi chiedi esplicitamente un riassunto.
+- Per call con più interlocutori Whisper non separa gli speaker: se serve
+  la diarizzazione, segnalalo all'utente (richiede un tool dedicato).

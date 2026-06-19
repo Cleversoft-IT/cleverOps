@@ -1,0 +1,37 @@
+/* Shared styles used across preview cards */
+@import url('../colors_and_type.css');
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: var(--fg-1);
+  font-family: var(--font-sans);
+}
+.card-root {
+  width: 700px;
+  padding: 24px;
+  background: #ffffff;
+  color: var(--fg-1);
+}
+.mono { font-family: var(--font-mono); }
+.sans { font-family: var(--font-sans); }
+.row { display: flex; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.muted { color: var(--fg-3); }
+.fg-2 { color: var(--fg-2); }
+.dot {
+  display: inline-block;
+  width: 4px; height: 4px; border-radius: 999px;
+  background: var(--brand);
+}
+.microlabel {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--fg-3);
+}
+.cursor-blink { color: var(--brand); animation: blink 1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }

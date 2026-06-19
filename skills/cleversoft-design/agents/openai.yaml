@@ -1,0 +1,10 @@
+interface:
+  display_name: "Cleversoft Design"
+  short_description: "Cleversoft/akkaz brand system"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/akkaz-wordmark-dark.svg"
+  brand_color: "#ff4017"
+  default_prompt: "Use $cleversoft-design to create a branded website mockup."
+
+policy:
+  allow_implicit_invocation: true
