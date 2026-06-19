@@ -1,0 +1,12 @@
+/* ============================================================
+   Cleversoft — Fonts
+   DM Sans (body) + Geist Mono (heading/mono/label/stat)
+   Caricati da Google Fonts CDN.
+
+   NOTA: in produzione i prodotti Cleversoft (Next.js) caricano DM Sans
+   via next/font/google e Geist Mono via il pacchetto `geist`.
+   Qui usiamo Google Fonts direttamente così i prototipi HTML funzionano
+   senza build step.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap');

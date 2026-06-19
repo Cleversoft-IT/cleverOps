@@ -1,0 +1,108 @@
+{
+  "repo": "Cleversoft-IT/cleverOps",
+  "counts": {
+    "skills": 12,
+    "agents": 1
+  },
+  "categories": [
+    "AI",
+    "Design",
+    "DevOps",
+    "Drupal",
+    "Mobile",
+    "Workflow"
+  ],
+  "skills": [
+    {
+      "name": "cleversoft-design",
+      "description": "Vecchio design system Cleversoft/akkaz incentrato sul profilo personale akkaz. Per nuovo lavoro di brand Cleversoft usa la skill cleversoft-design-system. Questa resta solo per retrocompatibilità.",
+      "category": "Design",
+      "legacy": true,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills cleversoft-design -y"
+    },
+    {
+      "name": "cleversoft-design-system",
+      "description": "Design system aziendale di Cleversoft (software house, Valle Camonica). Usa questa skill quando crei o revisioni interfacce, siti, landing, preventivi, mockup, screenshot, asset visivi, copy o prototipi che devono rispettare l'identità visiva Cleversoft. Formato compatibile impeccable (PRODUCT.md + DESIGN.md).",
+      "category": "Design",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills cleversoft-design-system -y"
+    },
+    {
+      "name": "ddev-expert",
+      "description": "DDEV local development expertise. Use when working with DDEV projects, containers, configuration, or troubleshooting DDEV environments.",
+      "category": "Drupal",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills ddev-expert -y"
+    },
+    {
+      "name": "docker-local",
+      "description": "Custom Docker Compose local development patterns. Use when working with Docker-based local environments, container configuration, or troubleshooting Docker setups.",
+      "category": "DevOps",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills docker-local -y"
+    },
+    {
+      "name": "drupal-expert",
+      "description": "Drupal 10/11 development expertise. Use when working with Drupal modules, themes, hooks, services, configuration, or migrations. Triggers on mentions of Drupal, Drush, Twig, modules, themes, or Drupal API.",
+      "category": "Drupal",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills drupal-expert -y"
+    },
+    {
+      "name": "drupal-migration",
+      "description": "Drupal migration expertise. Use when working with D7-to-D10 migrations, CSV imports, JSON API imports, or custom migration plugins.",
+      "category": "Drupal",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills drupal-migration -y"
+    },
+    {
+      "name": "drupal-security",
+      "description": "Drupal security expertise. Auto-activates when writing forms, controllers, queries, or handling user input. Prevents XSS, SQL injection, and access bypass vulnerabilities.",
+      "category": "Drupal",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills drupal-security -y"
+    },
+    {
+      "name": "frontend-design",
+      "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
+      "category": "Design",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills frontend-design -y"
+    },
+    {
+      "name": "ionic-skills",
+      "description": "Ionic Capacitor mobile app development with Angular, React, or Vue. RevenueCat payments, AdMob ads, i18n localization, onboarding flow, paywall, and Ionic Tabs navigation.",
+      "category": "Mobile",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills ionic-skills -y"
+    },
+    {
+      "name": "internal-skill",
+      "description": "Load this skill at the start of virtually every conversation that touches the internal-pwa project (the Ionic/React/Vite PWA under `internal-pwa/`). Relevant for any code change, commit, push, merge, build, deploy, rollback, version bump, or question about staging vs production. Covers Cloudflare Pages auto-build on redacted's account, branch model (`stage` preview → `main` production → `app.example.internal`), the mandatory `npm version` bump on every user-visible push to stage, the custom domain setup, wrangler multi-account workaround, and rollback procedure. Err on the side of loading it — most internal-pwa edits end in a commit that must follow the version-bump and branch-model rules documented here.",
+      "category": "DevOps",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills internal-skill -y"
+    },
+    {
+      "name": "plan-auditor",
+      "description": "Audit software implementation plans produced by coding agents before execution, and optionally audit implemented changes against an approved plan after execution. Use when the user asks to review, verify, audit, validate, improve, re-check, iterate on, or run an external check on a development plan or its implementation, especially Claude Code Markdown plans in .claude/plans or ~/.claude/plans, Codex plans, repo-local plans/ directories, PLAN.md files, roadmap/ticket implementation plans, Drupal implementation plans, \"latest plan\" requests, or post-implementation plan compliance checks.",
+      "category": "Workflow",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills plan-auditor -y"
+    },
+    {
+      "name": "transcribe",
+      "description": "Trascrive file audio (mp3, wav, m4a, mp4...) in testo con Whisper locale, ripulendo e formattando il risultato in paragrafi leggibili. Usa quando l'utente vuole trascrivere un file audio, una registrazione vocale o una call con un cliente.",
+      "category": "AI",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills transcribe -y"
+    }
+  ],
+  "agents": [
+    {
+      "name": "cleversoft-preventivi-creator",
+      "description": "Use this agent when the user needs to create a professional quote/proposal (preventivo) for Cleversoft IT services, including custom software development, strategic IT consulting, AI-based microservices, or web applications. Also use when the user requests to generate an interactive HTML website version of a previou…",
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --agents cleversoft-preventivi-creator.md -y"
+    }
+  ]
+}

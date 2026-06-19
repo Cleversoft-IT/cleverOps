@@ -77,7 +77,8 @@ Niente clone, niente registry pubblico — gira dal repo privato con la tua chia
 | `(skill interna rimossa)` | Deploy PWA su Cloudflare Pages: branch model, versioning, rollback |
 | `ionic-skills` | App Ionic/Capacitor: tab, paywall, RevenueCat, AdMob, i18n |
 | `frontend-design` | Interfacce distintive e production-grade, anti "AI-slop" |
-| `cleversoft-design` | Design system Cleversoft/akkaz: palette, tipografia, componenti, asset |
+| `cleversoft-design-system` | **Design system aziendale Cleversoft** (formato impeccable: PRODUCT.md + DESIGN.md), token, asset, preview |
+| `cleversoft-design` | ⚠️ Legacy (superata da `cleversoft-design-system`): design system Cleversoft/akkaz |
 
 ### 🤖 Agent
 
@@ -161,9 +162,15 @@ skill nel dettaglio, le opzioni avanzate e la struttura del repo.
 - **`frontend-design`** — linee guida per interfacce distintive e
   production-grade, **anti "AI-slop"**: design thinking (scopo/tono/vincoli),
   tipografia, colore, animazione, layout, cliché da evitare.
-- **`cleversoft-design`** — **design system** Cleversoft/akkaz: palette
-  (coral `#ff4017`), tipografia (Geist Mono / DM Sans), componenti, CSS, asset
-  SVG e preview HTML. Da usare per creare interfacce, mockup o asset branded.
+- **`cleversoft-design-system`** — **design system aziendale Cleversoft**, fonte di
+  verità del brand. In formato [impeccable](https://impeccable.style)/Google Stitch:
+  `PRODUCT.md` (strategia, voice, anti-reference) + `DESIGN.md` (token, 6 sezioni) +
+  sidecar `.impeccable/design.json` (componenti drop-in). Include token CSS
+  (coral `#ff4017`, Geist Mono / DM Sans), asset SVG, preview HTML e un UI kit.
+  Da usare per creare interfacce, landing, preventivi, mockup o asset branded.
+- **`cleversoft-design`** — ⚠️ **Legacy.** Versione precedente incentrata sul profilo
+  personale akkaz; mantenuta per retrocompatibilità ma **superata da
+  `cleversoft-design-system`**. Per nuovo lavoro usa quest'ultima.
 
 ### 🤖 Agent
 

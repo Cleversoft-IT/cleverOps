@@ -1,7 +1,12 @@
 ---
 name: cleversoft-design
-description: Use when creating or reviewing interfaces, websites, mockups, screenshots, visual assets, copy, or prototypes that must match the Cleversoft/akkaz visual design system.
+description: "[LEGACY — superata da cleversoft-design-system] Vecchio design system Cleversoft/akkaz incentrato sul profilo personale akkaz. Per nuovo lavoro di brand Cleversoft usa la skill cleversoft-design-system. Questa resta solo per retrocompatibilità."
 ---
+
+> ⚠️ **LEGACY — questa skill è superata da [`cleversoft-design-system`](../cleversoft-design-system/SKILL.md).**
+> La nuova skill è la fonte di verità del brand **aziendale** Cleversoft, in formato
+> impeccable (`PRODUCT.md` + `DESIGN.md` + sidecar). Usa questa solo per riferimento
+> storico o per artefatti che richiedono esplicitamente l'identità personale akkaz.
 
 # Cleversoft / akkaz Design System
 

@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-19T00:00:00Z",
+  "title": "Design System: Cleversoft",
+  "extensions": {
+    "colorMeta": {
+      "brand": {
+        "role": "primary",
+        "displayName": "Coral Cleversoft",
+        "canonical": "#ff4017",
+        "darkMode": "#ff5a33",
+        "tonalRamp": ["#2b0a04", "#5c160a", "#8a2110", "#b82c15", "#e63610", "#ff4017", "#ff6640", "#ffb3a1"]
+      },
+      "zinc": {
+        "role": "neutral",
+        "displayName": "Zinc",
+        "canonical": "oklch(0.21 0.006 285.885)",
+        "tonalRamp": ["#09090b", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#e4e4e7", "#fafafa"]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Grigio di sistema",
+        "canonical": "#f0f0f0",
+        "darkMode": "oklch(0.141 0.005 285.823)"
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Titolo hero, mono, chiuso dal cursore _ coral." },
+      "headline": { "displayName": "Headline", "purpose": "Titoli di sezione, mono, sentence-case." },
+      "body": { "displayName": "Body", "purpose": "Solo prosa nei <p>, DM Sans. Mai heading/label." },
+      "label": { "displayName": "Micro-label", "purpose": "Mono UPPERCASE 10px tracking 0.12em, con dot coral." }
+    },
+    "shadows": [
+      { "name": "xs", "value": "0 1px 2px 0 rgb(0 0 0 / 0.04)", "purpose": "Bottoni a riposo." },
+      { "name": "sm", "value": "0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 1px 0 rgb(0 0 0 / 0.04)", "purpose": "Card." },
+      { "name": "md", "value": "0 4px 10px -2px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.05)", "purpose": "Popover, dropdown." },
+      { "name": "lg", "value": "0 10px 24px -6px rgb(0 0 0 / 0.10), 0 4px 8px -4px rgb(0 0 0 / 0.06)", "purpose": "Solo chrome flottante (scroll-to-top, nav). Uno per pagina." }
+    ],
+    "motion": [
+      { "name": "ease-out-expo", "value": "cubic-bezier(0.19, 1, 0.22, 1)", "purpose": "Easing unico per tutte le entrate e transizioni." },
+      { "name": "entrance", "value": "opacity 0→1, translateY 20px→0, 0.5–0.7s, stagger 0.06–0.12s", "purpose": "Rivelazione delle sezioni (whileInView once)." },
+      { "name": "blink", "value": "blink 1s step-end infinite", "purpose": "Cursore _ coral (hard on/off, non smooth)." },
+      { "name": "press", "value": "scale(0.98)", "purpose": "active: sui CTA primari." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA primario: fill coral, label mono uppercase, prefisso + opzionale.",
+      "html": "<button class=\"ds-btn-primary\"><span class=\"ds-plus\">+</span> Prenota una call</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 6px; background: #ff4017; color: #fafafa; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 18px; border: none; border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04); cursor: pointer; transition: background 0.2s cubic-bezier(0.19,1,0.22,1), transform 0.1s; } .ds-btn-primary .ds-plus { color: #ffd9cf; } .ds-btn-primary:hover { background: #e63610; } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid #a1a1aa; outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondario: nessun fill, bordo zinc che vira coral in hover.",
+      "html": "<button class=\"ds-btn-outline\">Esplora i progetti</button>",
+      "css": ".ds-btn-outline { background: #ffffff; color: #27272a; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 18px; border: 1px solid rgba(212,212,216,0.6); border-radius: 8px; cursor: pointer; transition: color 0.2s, border-color 0.2s; } .ds-btn-outline:hover { color: #ff4017; border-color: rgba(255,64,23,0.4); } .ds-btn-outline:focus-visible { outline: 2px solid #a1a1aa; outline-offset: 2px; }"
+    },
+    {
+      "name": "Section Micro-label",
+      "kind": "custom",
+      "refersTo": "micro-label",
+      "description": "Etichetta firma sopra i titoli di sezione: dot coral 1x1 + mono uppercase 10px.",
+      "html": "<span class=\"ds-micro-label\"><span class=\"ds-dot\"></span>Cosa facciamo</span>",
+      "css": ".ds-micro-label { display: inline-flex; align-items: center; gap: 8px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: #71717a; } .ds-micro-label .ds-dot { width: 4px; height: 4px; border-radius: 9999px; background: #ff4017; }"
+    },
+    {
+      "name": "Tech Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Badge stack tecnico: outline, nessuno sfondo, mono mixed-case.",
+      "html": "<span class=\"ds-chip\">Next.js</span>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 12px; color: #52525b; padding: 2px 8px; border: 1px solid rgba(228,228,231,0.6); border-radius: 8px; background: transparent; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contenitore bianco su grigio di sistema, bordo hairline, ombra minima.",
+      "html": "<div class=\"ds-card\"><span class=\"ds-micro-label\"><span class=\"ds-dot\"></span>Gestionale</span><h3 class=\"ds-card-title\">Software su misura</h3><p class=\"ds-card-body\">Dal foglio Excel al gestionale web. Codice pulito, consegna veloce, niente fuffa.</p></div>",
+      "css": ".ds-card { background: #ffffff; border: 1px solid rgba(228,228,231,0.6); border-radius: 10px; padding: 24px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 1px 1px 0 rgb(0 0 0 / 0.04); transition: background 0.2s cubic-bezier(0.19,1,0.22,1); } .ds-card:hover { background: #fafafa; } .ds-card .ds-dot { width: 4px; height: 4px; border-radius: 9999px; background: #ff4017; } .ds-micro-label { display: inline-flex; align-items: center; gap: 8px; font-family: 'Geist Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.12em; color: #71717a; } .ds-card-title { font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 600; font-size: 20px; letter-spacing: -0.02em; color: #18181b; margin: 12px 0 8px; } .ds-card-body { font-family: 'DM Sans', ui-sans-serif, sans-serif; font-size: 16px; line-height: 1.6; color: #71717a; margin: 0; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo testo: bordo zinc, focus ring neutro (no glow colorato).",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"La tua email\" />",
+      "css": ".ds-input { width: 100%; background: #ffffff; color: #27272a; font-family: 'DM Sans', ui-sans-serif, sans-serif; font-size: 16px; padding: 10px 14px; border: 1px solid #e4e4e7; border-radius: 10px; transition: border-color 0.2s; } .ds-input::placeholder { color: #71717a; } .ds-input:focus { outline: 2px solid #a1a1aa; outline-offset: 2px; border-color: #d4d4d8; }"
+    },
+    {
+      "name": "Floating Nav Pill",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Nav flottante centrata, backdrop blur, voci mono che virano coral.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-active\" href=\"#\">Servizi</a><a class=\"ds-nav-link\" href=\"#\">Progetti</a><a class=\"ds-nav-link\" href=\"#\">Contatti</a></nav>",
+      "css": ".ds-nav { display: inline-flex; gap: 18px; align-items: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(228,228,231,0.6); border-radius: 9999px; padding: 8px 18px; box-shadow: 0 10px 24px -6px rgb(0 0 0 / 0.10), 0 4px 8px -4px rgb(0 0 0 / 0.06); } .ds-nav-link { font-family: 'Geist Mono', ui-monospace, monospace; font-size: 13px; color: #71717a; text-decoration: none; transition: color 0.2s; } .ds-nav-link:hover, .ds-nav-link.ds-active { color: #ff4017; }"
+    },
+    {
+      "name": "Hero Title with Cursor",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "Titolo hero mono chiuso dal cursore _ coral lampeggiante.",
+      "html": "<h1 class=\"ds-hero\">Costruiamo qualcosa insieme<span class=\"ds-cursor\">_</span></h1>",
+      "css": ".ds-hero { font-family: 'Geist Mono', ui-monospace, monospace; font-weight: 600; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: -0.02em; color: #18181b; margin: 0; } .ds-hero .ds-cursor { color: #ff4017; animation: ds-blink 1s step-end infinite; } @keyframes ds-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } @media (prefers-reduced-motion: reduce) { .ds-hero .ds-cursor { animation: none; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Il manuale del terminale",
+    "overview": "Cleversoft assomiglia a uno strumento che un tecnico bravo userebbe volentieri, non a una software house. Il sistema prende il vocabolario del terminale (mono, cursore _, angoli ASCII, prefisso +, dot coral) e lo usa come identità di marca, non come costume: funziona perché Cleversoft scrive davvero software, quindi il mono è letterale. Estetica indie-hacker confidente, superfici piatte, un solo colore che parla. Rifiuta i vecchi preventivi a gradiente blu/Inter/glass (corporate SaaS generico) e l'editorial-magazine fuori contesto.",
+    "keyCharacteristics": [
+      "Un solo colore brand (coral #ff4017), tutto il resto è scala zinc neutra.",
+      "Mono (Geist Mono) per ogni heading, label, bottone, numero, chip; DM Sans solo per i paragrafi.",
+      "Glifi-firma: cursore _ lampeggiante, prefisso +, angoli ASCII, dot brand 1×1.",
+      "Superfici piatte, bordi sottili, ombre minime. Niente gradienti, niente glass.",
+      "Italiano-first, voce diretta; inglese solo sui termini tecnici.",
+      "Blocchi zinc-950 come stacco di capitolo anche in light mode."
+    ],
+    "rules": [
+      { "name": "La regola della Voce Unica", "body": "Il coral copre ≤10% di qualsiasi schermata. La sua rarità è il punto: quando appare, significa qualcosa. Mai coral su testo lungo, mai due coral nella stessa vista.", "section": "colors" },
+      { "name": "La regola dello Stacco di Capitolo", "body": "Una sezione zinc-950 piena può comparire anche in light mode, come inversione editoriale voluta che spezza il ritmo.", "section": "colors" },
+      { "name": "La regola del Mono Sovrano", "body": "Tutto ciò che non è prosa è in mono: heading, label, bottoni, numeri, chip, prezzi. DM Sans solo dentro i <p>. Un titolo in sans è un bug.", "section": "typography" },
+      { "name": "La regola del Cursore", "body": "Il cursore _ coral chiude i titoli che 'parlano', animato blink 1s step-end. Uno per vista, non su ogni riga.", "section": "typography" },
+      { "name": "La regola del Bordo-prima-dell'Ombra", "body": "Per separare due superfici si usa un bordo hairline 1px zinc-200/60, non un'ombra. Le ombre rispondono solo a stato/flottamento.", "section": "elevation" },
+      { "name": "La regola del gap-px", "body": "Nelle griglie di card su desktop la separazione è un gap:1px su wrapper zinc-200/60; le celle bianche e i gap fanno da linee hairline. La card non ha bordo proprio.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do usare un solo colore brand: coral #ff4017 (light) / #ff5a33 (dark), ≤10% di schermata.",
+      "Do mettere in Geist Mono ogni heading, label, bottone, numero e chip; DM Sans solo nei <p>.",
+      "Do separare le superfici con bordi hairline 1px zinc-200/60 e con il trucco gap-px nelle griglie, non con le ombre.",
+      "Do usare i glifi-firma con misura: cursore _ coral, prefisso +, dot brand 1×1, angoli ASCII.",
+      "Do tenere superfici piatte e ombre minime (xs/sm); un solo shadow-lg per pagina, solo per chrome flottante.",
+      "Do scrivere copy italiano, diretto, in seconda persona singolare; l'inglese solo sui termini tecnici.",
+      "Do usare i blocchi zinc-950 come stacco di capitolo anche in light mode.",
+      "Do verificare il contrasto: body ≥4.5:1; mai zinc-400 come testo di lettura su fondo chiaro.",
+      "Do usare icone Lucide (stroke 2, line-cap arrotondati), zinc-400/500 a riposo → coral in hover."
+    ],
+    "donts": [
+      "Don't usare gradienti — né blu #0ea5e9→#0284c7 / #3b82f6→#1e40af né altri (vecchio preventivo legacy). Niente background-clip: text con gradiente.",
+      "Don't usare glassmorphism decorativo; il blur solo sul chrome flottante che si sovrappone al contenuto.",
+      "Don't usare il font Inter o stack system-ui come voce primaria: la voce è Geist Mono + DM Sans.",
+      "Don't cadere nel template SaaS: hero-metricone + statistiche + accento gradient; griglie infinite di card identiche icona+titolo+testo.",
+      "Don't mettere l'eyebrow uppercase tracciato sopra ogni sezione come riempimento; la micro-label è deliberata, mai due di fila.",
+      "Don't usare emoji nella UI/chrome, stock photo 'business handshake', illustrazioni 3D/blob decorativi.",
+      "Don't usare bordi laterali colorati (border-left/right > 1px come stripe), nested cards, ombre colorate/glow.",
+      "Don't far sembrare la pagina 'generata da un'AI': niente cream/beige di default, niente editorial serif+corsivo fuori contesto."
+    ]
+  }
+}

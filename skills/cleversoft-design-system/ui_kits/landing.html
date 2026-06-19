@@ -1,0 +1,253 @@
+<!doctype html><html><head>
+<meta charset="utf-8">
+<title>Cleversoft — UI Kit</title>
+<link rel="stylesheet" href="../tokens/tokens.css">
+<style>
+  body { margin:0; background: var(--background); }
+  .wrap { max-width: 64rem; margin: 0 auto; padding: 0 24px; }
+  .nav-bar { border-bottom: 1px solid var(--border-subtle); padding: 18px 0; position: sticky; top: 0; background: rgba(240,240,240,0.85); backdrop-filter: blur(8px); z-index: 10; }
+  .nav-row { display:flex; align-items:center; justify-content: space-between; }
+  .nav-links { display:flex; gap: 22px; }
+  .nav-link { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--fg-2); text-decoration: none; }
+  .nav-link:hover { color: var(--fg-1); }
+  .nav-link.active { color: var(--brand); }
+  .section { padding: 96px 0; border-bottom: 1px dashed var(--border-subtle); }
+  .section-head { display:flex; align-items: baseline; justify-content: space-between; margin-bottom: 32px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-3); display:flex; align-items:center; gap:8px; }
+  .eyebrow .dot { width: 4px; height:4px; background: var(--brand); border-radius: 999px; }
+  .eyebrow-brand { color: var(--brand); }
+  .stack { display: flex; flex-direction: column; gap: 12px; }
+  .row { display:flex; align-items:center; gap: 12px; }
+  /* hero */
+  .hero-title { font-family: var(--font-mono); font-weight: 600; font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.02; letter-spacing: -0.02em; color: var(--fg-1); margin: 18px 0 18px; }
+  .hero-p { font-family: var(--font-sans); font-size: 20px; color: var(--fg-2); line-height: 1.55; max-width: 34rem; }
+  .composer { margin-top: 36px; background: white; border: 1px solid var(--zinc-200); border-radius: 14px; padding: 4px; max-width: 640px; box-shadow: var(--shadow-xs); }
+  .composer-inner { display:flex; align-items:center; gap: 10px; padding: 14px 16px; }
+  .composer .indicator { width: 6px; height: 6px; background: var(--brand); border-radius: 999px; flex-shrink: 0; }
+  .composer .input { flex: 1; font-family: var(--font-mono); font-size: 14px; color: var(--fg-1); }
+  .btn { font-family: var(--font-mono); font-size: 14px; font-weight: 500; border-radius: 8px; padding: 10px 16px; border: 1px solid transparent; cursor: pointer; display:inline-flex; align-items:center; gap: 6px; text-decoration: none; }
+  .btn-primary { background: var(--brand); color: white; }
+  .btn-secondary { background: white; color: var(--fg-1); border-color: var(--zinc-200); }
+  .btn-dark { background: var(--zinc-800); color: white; padding: 8px 14px; font-size: 12px; }
+  .btn-small { font-size: 12px; padding: 8px 12px; border-radius: 8px; }
+  .chips { display:flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .chip { font-family: var(--font-mono); font-size: 12px; background: white; border: 1px solid var(--zinc-200); border-radius: 999px; padding: 6px 12px; color: var(--fg-2); cursor: pointer; }
+  .chip:hover { border-color: var(--zinc-400); color: var(--fg-1); }
+  /* service grid */
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .service-card { background: white; border: 1px solid var(--zinc-200); border-radius: 14px; padding: 24px; display:flex; flex-direction: column; gap: 12px; min-height: 200px; }
+  .service-num { font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); letter-spacing: .12em; }
+  .service-title { font-family: var(--font-mono); font-weight: 600; font-size: 20px; color: var(--fg-1); letter-spacing: -0.01em; }
+  .service-desc { font-family: var(--font-sans); font-size: 14px; color: var(--fg-2); line-height: 1.55; }
+  .service-tag { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--brand); }
+  /* projects */
+  .projects-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .project-card { background: white; border: 1px solid var(--zinc-200); border-radius: 14px; padding: 20px; display:flex; flex-direction: column; gap: 12px; }
+  .project-thumb { aspect-ratio: 16/10; background: var(--zinc-50); border: 1px dashed var(--zinc-300); border-radius: 10px; display:flex; align-items:center; justify-content:center; font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); }
+  .project-cat { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--brand); }
+  .project-title { font-family: var(--font-mono); font-weight: 600; font-size: 18px; color: var(--fg-1); margin-top: 4px; }
+  .project-desc { font-family: var(--font-sans); font-size: 13px; color: var(--fg-2); line-height: 1.5; }
+  .tag-row { display:flex; gap: 6px; flex-wrap: wrap; }
+  .tag { font-family: var(--font-mono); font-size: 11px; border: 1px solid var(--zinc-200); border-radius: 6px; padding: 2px 8px; color: var(--fg-2); }
+  .badge-live { font-family: var(--font-mono); font-size: 10px; background: var(--brand); color: white; border-radius: 999px; padding: 3px 10px; letter-spacing: .08em; }
+  /* changelog style row */
+  .log-list { display:flex; flex-direction: column; border-top: 1px solid var(--border-subtle); }
+  .log-row { display: grid; grid-template-columns: 120px 180px 1fr auto; gap: 20px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); }
+  .log-date { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); letter-spacing: .05em; }
+  .log-cat { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--brand); }
+  .log-title { font-family: var(--font-mono); font-size: 15px; font-weight: 500; color: var(--fg-1); }
+  .log-arrow { font-family: var(--font-mono); font-size: 14px; color: var(--fg-3); }
+  /* contact */
+  .contact-grid { display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .contact-card { background: white; border: 1px solid var(--zinc-200); border-radius: 14px; padding: 24px; display:flex; flex-direction:column; gap: 14px; }
+  .contact-big { font-family: var(--font-mono); font-size: 28px; font-weight: 600; color: var(--fg-1); letter-spacing: -0.02em; }
+  .status-row { display:flex; align-items:center; gap: 8px; }
+  .pulse { width: 8px; height:8px; background: var(--brand); border-radius: 999px; box-shadow: 0 0 0 0 rgba(255,64,23,0.6); animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(255,64,23,0.5)} 70%{box-shadow:0 0 0 12px rgba(255,64,23,0)} 100%{box-shadow:0 0 0 0 rgba(255,64,23,0)} }
+  .footer { padding: 40px 0 56px; }
+  .footer-row { display:flex; justify-content: space-between; align-items: center; color: var(--fg-3); }
+  .cursor-blink { color: var(--brand); animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+
+<nav class="nav-bar">
+  <div class="wrap nav-row">
+    <img src="../assets/cleversoft-wordmark-light.svg" alt="Cleversoft" style="height:24px"/>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">cosa faccio</a>
+      <a class="nav-link" href="#">progetti</a>
+      <a class="nav-link" href="#">contatti</a>
+      <a class="nav-link" href="#">IT · EN</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="section" style="padding-top: 80px">
+  <div class="wrap">
+    <div class="eyebrow eyebrow-brand"><span class="dot"></span> OPEN TO WORK · Q1 2026</div>
+    <h1 class="hero-title">Costruiamo software<br/>su misura<span class="cursor-blink">_</span></h1>
+    <p class="hero-p">Software house della Valle Camonica. Gestionali custom, web app e microservizi AI — codice pulito, consegna veloce, niente fuffa.</p>
+    <div class="composer">
+      <div class="composer-inner">
+        <span class="indicator"></span>
+        <div class="input">Raccontami il tuo progetto<span class="cursor-blink">_</span></div>
+        <button class="btn btn-dark">Invia ↵</button>
+      </div>
+    </div>
+    <div class="chips">
+      <button class="chip">Voglio un MVP</button>
+      <button class="chip">Un assistant RAG</button>
+      <button class="chip">Automatizzare processi</button>
+      <button class="chip">Code review & audit</button>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> COSA FACCIO</div>
+        <h2 style="margin:12px 0 0">Tre modi di lavorare insieme.</h2>
+      </div>
+      <a class="nav-link" href="#" style="color: var(--brand)">tutti i servizi →</a>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-num">01 / 03</div>
+        <div class="service-tag">AI SOLUTIONS</div>
+        <div class="service-title">AI assistants & RAG</div>
+        <div class="service-desc">Chatbot interni su documenti aziendali, agents con LangGraph, integrazioni MCP.</div>
+        <div class="tag-row" style="margin-top:auto"><span class="tag">LangGraph</span><span class="tag">RAG</span><span class="tag">MCP</span></div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">02 / 03</div>
+        <div class="service-tag">WEB DEV</div>
+        <div class="service-title">MVP full-stack</div>
+        <div class="service-desc">Da idea a prodotto in 2–6 settimane. Next.js, Postgres, auth, pagamenti — tutto già pronto.</div>
+        <div class="tag-row" style="margin-top:auto"><span class="tag">Next.js</span><span class="tag">Postgres</span><span class="tag">Stripe</span></div>
+      </div>
+      <div class="service-card">
+        <div class="service-num">03 / 03</div>
+        <div class="service-tag">AUTOMATION</div>
+        <div class="service-title">Automazioni & tools</div>
+        <div class="service-desc">Script Python, scraping, pipeline dati, integrazioni API. Il lavoro noioso, fatto una volta sola.</div>
+        <div class="tag-row" style="margin-top:auto"><span class="tag">Python</span><span class="tag">n8n</span><span class="tag">Supabase</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROJECTS -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> PROGETTI IN EVIDENZA</div>
+        <h2 style="margin:12px 0 0">Cosa abbiamo costruito di recente.</h2>
+      </div>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-thumb">placeholder · 16:10</div>
+        <div class="row" style="justify-content:space-between">
+          <span class="project-cat">AI SOLUTIONS</span>
+          <span class="badge-live">LIVE</span>
+        </div>
+        <div>
+          <div class="project-title">Assistant RAG per PMI</div>
+          <div class="project-desc">Chatbot interno costruito su LangGraph che risponde a domande su 1.200+ documenti aziendali. Risposta in &lt;2s.</div>
+        </div>
+        <div class="tag-row"><span class="tag">Python</span><span class="tag">LangGraph</span><span class="tag">Postgres</span><span class="tag">pgvector</span></div>
+      </div>
+      <div class="project-card">
+        <div class="project-thumb">placeholder · 16:10</div>
+        <div class="row" style="justify-content:space-between">
+          <span class="project-cat">WEB DEV</span>
+          <span class="badge-live" style="background:var(--zinc-100);color:var(--fg-2)">WIP</span>
+        </div>
+        <div>
+          <div class="project-title">Dashboard SaaS per coach</div>
+          <div class="project-desc">App Next.js con scheduling, pagamenti Stripe, area clienti. Consegna 4 settimane.</div>
+        </div>
+        <div class="tag-row"><span class="tag">Next.js</span><span class="tag">Stripe</span><span class="tag">Supabase</span></div>
+      </div>
+    </div>
+
+    <!-- changelog-style row list -->
+    <div class="log-list" style="margin-top: 48px">
+      <div class="log-row">
+        <span class="log-date">01 · DIC 2025</span>
+        <span class="log-cat">AI SOLUTIONS</span>
+        <span class="log-title">Scraper + classifier per listings immobiliari</span>
+        <span class="log-arrow">→</span>
+      </div>
+      <div class="log-row">
+        <span class="log-date">14 · OTT 2025</span>
+        <span class="log-cat">WEB DEV</span>
+        <span class="log-title">Landing page + lead funnel per studio legale</span>
+        <span class="log-arrow">→</span>
+      </div>
+      <div class="log-row">
+        <span class="log-date">03 · SET 2025</span>
+        <span class="log-cat">AUTOMATION</span>
+        <span class="log-title">Pipeline fatturazione automatica con Python + n8n</span>
+        <span class="log-arrow">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" style="border-bottom: none">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> CONTATTI</div>
+        <h2 style="margin:12px 0 0">Parliamone.</h2>
+      </div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="status-row">
+          <span class="pulse"></span>
+          <span class="eyebrow eyebrow-brand">DISPONIBILE · Q1 2026</span>
+        </div>
+        <div class="contact-big">giomarco@cleversoft.it</div>
+        <div class="service-desc">Mandaci un'email con due righe sul progetto. Rispondiamo entro 24h nei giorni lavorativi.</div>
+        <div class="row" style="gap:10px;margin-top:auto">
+          <button class="btn btn-primary">Scrivici →</button>
+          <button class="btn btn-secondary">Prenota call</button>
+        </div>
+      </div>
+      <div class="contact-card">
+        <div class="eyebrow"><span class="dot"></span> OPPURE — CHIEDI AL BOT</div>
+        <div class="service-desc" style="color:var(--fg-1);font-size:15px">L'assistant conosce i miei progetti, lo stack, i prezzi di massima e la disponibilità. Fagli una domanda.</div>
+        <div class="composer" style="max-width:none;margin-top:auto">
+          <div class="composer-inner">
+            <span class="indicator"></span>
+            <div class="input">Quanto costa un MVP?<span class="cursor-blink">_</span></div>
+            <button class="btn btn-dark">Invia ↵</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap footer-row">
+    <span class="eyebrow">© 2026 · CLEVERSOFT IT · MADE IN VALLE CAMONICA</span>
+    <div class="row" style="gap:16px">
+      <a class="nav-link" href="#">github</a>
+      <a class="nav-link" href="#">linkedin</a>
+      <a class="nav-link" href="#">email</a>
+    </div>
+  </div>
+</footer>
+
+</body></html>
