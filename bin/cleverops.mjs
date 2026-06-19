@@ -199,21 +199,18 @@ async function interactive(uninstall) {
   const skills = listSkills().map((s) => ({ value: s, label: s, hint: skillHint(s) }));
   const agents = listAgents().map((a) => ({ value: a, label: a.replace(/\.md$/, '') }));
 
+  const project = process.cwd();
+  // L'install di skill/agent avviene DENTRO la TUI (step con spinner): passiamo la callback.
+  const install = (pick) => uninstall
+    ? doUninstall({ targets: pick.targets, project, skills: pick.skills, agents: pick.agents })
+    : doInstall({ targets: pick.targets, project, mode: pick.mode, skills: pick.skills, agents: pick.agents });
+
   const { runWizard } = await import('./tui.mjs');
-  const pick = await runWizard({ skills, agents, det, isDev: IS_DEV_CHECKOUT, version: VERSION, uninstall });
+  const pick = await runWizard({ skills, agents, det, isDev: IS_DEV_CHECKOUT, version: VERSION, uninstall, install });
   if (!pick) { console.log('Annullato.'); return; }
 
-  const project = process.cwd();
-  const needPlacement = pick.skills.length > 0 || pick.agents.length > 0;
-
-  if (needPlacement) {
-    const results = uninstall
-      ? doUninstall({ targets: pick.targets, project, skills: pick.skills, agents: pick.agents })
-      : doInstall({ targets: pick.targets, project, mode: pick.mode, skills: pick.skills, agents: pick.agents });
-    console.log(results.join('\n'));
-    if (!uninstall && pick.skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
-      console.log("⚠ La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
-    }
+  if (!uninstall && pick.skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
+    console.log("⚠ La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
   }
 
   if (!uninstall) {

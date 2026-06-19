@@ -2,7 +2,7 @@
 // così gira diretta via `npx github:` senza step di build.
 // runWizard(ctx) renderizza il wizard e risolve con le scelte (o null se annullato).
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { render, Box, Text, useInput } from 'ink';
 import { BRAND, SPLASH, ART_SLANT, ART_SMALL, lerpHex } from './style.mjs';
 
@@ -81,7 +81,7 @@ function MultiSelect({ title, items, initial = [], filterable = false, onSubmit 
             return h(Text, { key: it.value },
               h(Text, { color: BRAND }, active ? '› ' : '  '),
               h(Text, { color: on ? BRAND : undefined, dimColor: !on }, on ? '◼ ' : '◻ '),
-              h(Text, { bold: active }, it.label),
+              h(Text, { bold: active, color: on ? BRAND : undefined }, it.label),
               it.hint ? h(Text, { dimColor: true }, '  ' + it.hint) : null,
             );
           })),
@@ -137,8 +137,43 @@ function Confirm({ message, recap = [], initial = true, onSubmit }) {
   );
 }
 
+// ----------------------------------------------------------------- Spinner
+function Spinner() {
+  const frames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setI((x) => (x + 1) % frames.length), 80);
+    return () => clearInterval(t);
+  }, []);
+  return h(Text, { color: BRAND }, frames[i]);
+}
+
+// step di installazione con spinner (run è sync; piccolo dwell per far girare lo spinner)
+function Installing({ label, run, onDone }) {
+  const [done, setDone] = useState(false);
+  const [results, setResults] = useState([]);
+  useEffect(() => {
+    const t1 = setTimeout(() => {
+      let r = [];
+      try { r = run() || []; } catch (e) { r = ['errore: ' + (e && e.message ? e.message : e)]; }
+      setResults(r);
+      setDone(true);
+      setTimeout(() => onDone(), 900);
+    }, 550);
+    return () => clearTimeout(t1);
+  }, []);
+  return h(Box, { flexDirection: 'column', paddingX: 1 },
+    done
+      ? h(Text, null, h(Text, { color: BRAND }, '✓ '), label.replace('…', ' completata'))
+      : h(Text, null, h(Spinner, null), '  ', label),
+    done && results.length
+      ? h(Box, { flexDirection: 'column', marginTop: 1 }, ...results.map((r, i) => h(Text, { key: i, dimColor: true }, r)))
+      : null,
+  );
+}
+
 // --------------------------------------------------------------------- App
-function App({ skills, agents, det, isDev, version, uninstall, onDone }) {
+function App({ skills, agents, det, isDev, version, uninstall, install, onDone }) {
   const [step, setStep] = useState('skills');
   const [pick, setPick] = useState({ skills: [], agents: [], extras: [], targets: [], mode: 'copy' });
   const upd = (patch) => setPick((p) => ({ ...p, ...patch }));
@@ -213,10 +248,24 @@ function App({ skills, agents, det, isDev, version, uninstall, onDone }) {
   }
   if (pick.extras.length) recap.push(`extra   ${pick.extras.join(', ')}`);
   if (!recap.length) recap.push('niente selezionato');
+
+  if (step === 'installing')
+    return frame(h(Installing, {
+      key: 'installing',
+      label: uninstall ? 'Rimozione…' : 'Installazione…',
+      run: () => install(pick),
+      onDone: () => onDone(pick),
+    }));
+
   return frame(h(Confirm, {
     key: 'confirm',
     message: uninstall ? 'Rimuovo?' : 'Procedo?', recap,
-    onSubmit: (yes) => onDone(yes ? pick : null),
+    onSubmit: (yes) => {
+      if (!yes) return onDone(null);
+      const np2 = pick.skills.length || pick.agents.length;
+      if (np2 && install) return setStep('installing');
+      return onDone(pick);
+    },
   }));
 }
 
