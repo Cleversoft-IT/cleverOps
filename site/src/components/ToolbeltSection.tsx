@@ -17,7 +17,7 @@ export function ToolbeltSection() {
         </span>
         <div className="mt-2.5">
           <CommandBlock
-            command={`npx github:${catalog.repo} --toolbelt -y`}
+            command={`npx github:${catalog.repo} --toolbelt`}
             size="md"
             emphasize="--toolbelt"
           />

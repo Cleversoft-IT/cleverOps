@@ -14,8 +14,7 @@ const FLAGS: { flag: string; what: string }[] = [
   { flag: "--agents <f.md>", what: "installa solo gli agent elencati" },
   { flag: "--toolbelt", what: "installa i CLI del toolbelt (rg, fd, tree, ast-grep, gh)" },
   { flag: "--impeccable", what: "installa il design system impeccable" },
-  { flag: "--all", what: "tutto il catalogo, senza chiedere" },
-  { flag: "-y", what: "salta le conferme" },
+  { flag: "--all", what: "tutto il catalogo" },
 ];
 
 export function InstallerSection() {
@@ -48,13 +47,13 @@ export function InstallerSection() {
 
         <div className="flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
-            tutto, senza domande
+            tutto il catalogo
           </span>
           <p className="mt-2 flex-1 font-sans text-sm leading-relaxed text-[var(--muted-foreground)]">
-            Tutte le skill su Claude Code, nessuna conferma.
+            Tutte le skill su Claude Code e Codex.
           </p>
           <div className="mt-4 border-t border-[var(--border)] pt-4">
-            <CommandBlock command={`npx github:${repo} --all --target claude -y`} emphasize="--all" />
+            <CommandBlock command={`npx github:${repo} --all --target claude,codex`} emphasize="--all" />
           </div>
         </div>
       </div>

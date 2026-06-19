@@ -34,10 +34,8 @@ const CATEGORY = {
 
 const LEGACY = new Set(["cleversoft-design"]);
 
-// Harness di destinazione per skill (default: claude). plan-auditor è pensata per Codex.
-const TARGET = {
-  "plan-auditor": "codex",
-};
+// Le skill sono installabili sia in Claude Code che in Codex.
+const SKILL_TARGETS = "claude,codex";
 
 // Parser frontmatter minimale: blocco tra i primi due "---".
 function parseFrontmatter(md) {
@@ -66,14 +64,12 @@ function readSkill(name) {
   if (!fs.existsSync(file)) return null;
   const fm = parseFrontmatter(fs.readFileSync(file, "utf8"));
   const description = (fm.description || "").replace(/^\[LEGACY[^\]]*\]\s*/i, "").trim();
-  const target = TARGET[name] || "claude";
   return {
     name,
     description,
     category: CATEGORY[name] || "Altro",
     legacy: LEGACY.has(name) || /\blegacy\b/i.test(fm.description || ""),
-    target,
-    command: `npx github:${REPO} --target ${target} --skills ${name} -y`,
+    command: `npx github:${REPO} --target ${SKILL_TARGETS} --skills ${name}`,
   };
 }
 
@@ -89,7 +85,7 @@ function readAgent(file) {
   return {
     name: fm.name || name,
     description,
-    command: `npx github:${REPO} --target claude --agents ${file} -y`,
+    command: `npx github:${REPO} --target claude --agents ${file}`,
   };
 }
 

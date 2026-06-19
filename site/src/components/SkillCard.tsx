@@ -1,12 +1,6 @@
 import { CommandBlock } from "./CommandBlock";
 import type { Skill } from "@/lib/skills";
 
-const TARGET_LABEL: Record<string, string> = {
-  claude: "Claude Code",
-  codex: "Codex",
-  project: "Progetto",
-};
-
 export function SkillCard({ skill }: { skill: Skill }) {
   return (
     <article
@@ -19,16 +13,11 @@ export function SkillCard({ skill }: { skill: Skill }) {
           <span className="h-1 w-1 shrink-0 rounded-full bg-brand" aria-hidden />
           {skill.category}
         </span>
-        <div className="flex items-center gap-1.5">
-          {skill.legacy && (
-            <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
-              legacy
-            </span>
-          )}
+        {skill.legacy && (
           <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
-            {TARGET_LABEL[skill.target] ?? skill.target}
+            legacy
           </span>
-        </div>
+        )}
       </div>
 
       <h3 className="mt-4 font-mono text-lg font-semibold tracking-[-0.01em] text-[var(--card-foreground)]">

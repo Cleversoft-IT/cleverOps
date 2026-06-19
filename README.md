@@ -40,10 +40,10 @@ Niente clone, niente registry pubblico — gira dal repo privato con la tua chia
 | Voglio… | Comando |
 |---|---|
 | 🎛️ **Scegliere a mano** (consigliato) | `npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git` |
-| 🌍 **Tutto, per tutti i progetti** | `… --target claude,codex --all -y` |
-| 📁 **Tutto, solo in questo progetto** | `… --target project --project . --all -y` |
-| 🎯 **Solo alcune skill** | `… --target claude --skills drupal-expert,plan-auditor -y` |
-| 🧹 **Disinstallare** | `… uninstall --target project --project . --all -y` |
+| 🌍 **Tutto, per tutti i progetti** | `… --target claude,codex --all` |
+| 📁 **Tutto, solo in questo progetto** | `… --target project --project . --all` |
+| 🎯 **Solo alcune skill** | `… --target claude,codex --skills drupal-expert,plan-auditor` |
+| 🧹 **Disinstallare** | `… uninstall --target project --project . --all` |
 
 <sub>`…` = `npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git`</sub>
 
@@ -182,27 +182,26 @@ Flag per uso non interattivo (es. provisioning di un nuovo hosting):
 ```bash
 # tutto, dentro un progetto specifico
 npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git \
-  --target project --project /var/www/sito --all -y
+  --target project --project /var/www/sito --all
 
 # solo alcune skill, a livello utente (Claude + Codex)
 npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git \
-  --target claude,codex --skills drupal-expert,plan-auditor -y
+  --target claude,codex --skills drupal-expert,plan-auditor
 
 # rimozione
 npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git \
-  uninstall --target project --project . --all -y
+  uninstall --target project --project . --all
 ```
 
 | Flag | Effetto |
 |---|---|
-| `--target claude,codex,project` | dove installare (`project` → `<dir>/.claude/`) |
+| `--target claude,codex,project` | dove installare (`project` → `<dir>/.claude/`); skill: default `claude,codex` |
 | `--project PATH` | cartella del progetto (default: cwd) |
 | `--all` · `--skills a,b` · `--agents x.md` | cosa installare |
 | `--copy` / `--link` | copia (default) o symlink (solo da checkout git) |
 | `--ccstatusline` | installa anche la statusline (vedi sotto) |
 | `--toolbelt` | installa il toolbelt CLI (rg, fd, tree, ast-grep, gh) |
 | `--impeccable` | installa impeccable (design system, dipendenza esterna via npx) |
-| `-y` | nessuna conferma |
 
 ### Fallback senza Node — `install.sh`
 
@@ -224,21 +223,21 @@ un coding agent più efficace (ricerca, refactor strutturale, GitHub). Script cr
 in [`extras/toolbelt/`](extras/toolbelt/) (rileva brew/apt/dnf/pacman/cargo/npm).
 
 ```bash
-npx github:Cleversoft-IT/cleverOps --toolbelt -y   # oppure: bash extras/toolbelt/install.sh
+npx github:Cleversoft-IT/cleverOps --toolbelt   # oppure: bash extras/toolbelt/install.sh
 ```
 
 **impeccable** — design system in-the-loop (`PRODUCT.md` + `DESIGN.md`, comandi
 `critique`/`polish`/`live`). Dipendenza esterna, non la cloniamo.
 
 ```bash
-npx github:Cleversoft-IT/cleverOps --impeccable -y   # oppure: npx impeccable install
+npx github:Cleversoft-IT/cleverOps --impeccable   # oppure: npx impeccable install
 ```
 
 **ccstatusline-gradient** — la statusline, pacchetto npm a sé
 ([`akkaz/ccstatusline-gradient`](https://github.com/akkaz/ccstatusline-gradient)).
 
 ```bash
-npx -y ccstatusline-gradient@latest --onboard
+npx ccstatusline-gradient@latest --onboard
 ```
 
 ## 🗂️ Struttura del repo

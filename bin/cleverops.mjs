@@ -61,8 +61,8 @@ Uso:
   npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git        # TUI interattiva
   cleverops uninstall                                             # rimozione guidata
 
-Flag non interattivi (provisioning):
-  --target claude,codex,project   dove installare
+Flag (provisioning non interattivo — basta passarne uno):
+  --target claude,codex,project   dove installare (default skill: claude,codex)
   --project PATH                  cartella progetto (per target project; default cwd)
   --copy | --link                 copia (default via npx) o symlink (solo da checkout git)
   --all                           tutte le skill e gli agent
@@ -70,7 +70,6 @@ Flag non interattivi (provisioning):
   --ccstatusline                  installa anche ccstatusline-gradient (npx)
   --toolbelt                      installa il toolbelt CLI (rg, fd, tree, ast-grep, gh)
   --impeccable                    installa impeccable (design system, esterno via npx)
-  -y, --yes                       nessuna conferma
 `;
 
 // ---------- core install ----------
@@ -174,17 +173,46 @@ function nonInteractive(args, uninstall) {
   if (!uninstall && f.impeccable) runImpeccable();
 }
 
+// Hint per i menu: prima frase della description in SKILL.md.
+function skillHint(name) {
+  try {
+    const md = fs.readFileSync(join(SKILLS_DIR, name, 'SKILL.md'), 'utf8');
+    const m = md.match(/^description:\s*(.+)$/m);
+    if (!m) return undefined;
+    let d = m[1].trim().replace(/^["']|["']$/g, '').replace(/^\[LEGACY[^\]]*\]\s*/i, '');
+    d = d.split(/(?<=[.!?])\s/)[0];
+    return d.length > 64 ? d.slice(0, 61) + '…' : d;
+  } catch { return undefined; }
+}
+
 // ---------- interattivo ----------
 async function interactive(uninstall) {
   intro(uninstall ? 'cleverOps — rimozione' : 'cleverOps — installer');
 
+  // 1) COSA — prima si sceglie cosa installare
+  const skills = bail(await multiselect({
+    message: uninstall ? 'Quali skill rimuovere?' : 'Quali skill installare?',
+    options: listSkills().map(s => ({ value: s, label: s, hint: skillHint(s) })),
+    required: false,
+  }));
+  const agentOpts = listAgents();
+  const agents = agentOpts.length ? bail(await multiselect({
+    message: uninstall ? 'Quali agent rimuovere?' : 'Quali agent installare?',
+    options: agentOpts.map(a => ({ value: a, label: a.replace(/\.md$/, '') })),
+    required: false,
+  })) : [];
+
+  if (!skills.length && !agents.length) { outro('Niente selezionato.'); return; }
+
+  // 2) DOVE — poi dove installarlo (skill installabili sia in Claude Code che Codex)
   const targets = bail(await multiselect({
-    message: 'Dove?',
+    message: 'Dove installo?',
     options: [
       { value: 'claude', label: 'Claude Code (utente)', hint: '~/.claude' },
       { value: 'codex', label: 'Codex (utente)', hint: '~/.codex' },
       { value: 'project', label: 'Progetto', hint: 'cartella corrente → .claude/' },
     ],
+    initialValues: ['claude', 'codex'],
     required: true,
   }));
 
@@ -193,6 +221,7 @@ async function interactive(uninstall) {
     project = bail(await text({ message: 'Path del progetto', initialValue: process.cwd() }));
   }
 
+  // 3) MODALITÀ
   let mode = 'copy';
   if (!uninstall) {
     if (IS_DEV_CHECKOUT) {
@@ -209,20 +238,7 @@ async function interactive(uninstall) {
     }
   }
 
-  const skills = bail(await multiselect({
-    message: uninstall ? 'Quali skill rimuovere?' : 'Quali skill installare?',
-    options: listSkills().map(s => ({ value: s, label: s })),
-    required: false,
-  }));
-  const agentOpts = listAgents();
-  const agents = agentOpts.length ? bail(await multiselect({
-    message: uninstall ? 'Quali agent rimuovere?' : 'Quali agent installare?',
-    options: agentOpts.map(a => ({ value: a, label: a })),
-    required: false,
-  })) : [];
-
-  if (!skills.length && !agents.length) { outro('Niente selezionato.'); return; }
-
+  // 4) CONFERMA
   const ok = bail(await confirm({
     message: `${uninstall ? 'Rimuovo' : 'Installo'} ${skills.length} skill + ${agents.length} agent su [${targets.join(', ')}]${uninstall ? '' : ` (${mode})`}?`,
   }));
@@ -256,7 +272,9 @@ const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) { console.log(HELP); process.exit(0); }
 const uninstall = args._[0] === 'uninstall' || args._[0] === 'remove';
 const hasFlags = args.flags.all || args.flags.skills || args.flags.agents || args.flags.target || args.flags.toolbelt || args.flags.impeccable;
-if (hasFlags && !process.stdout.isTTY || (hasFlags && args.flags.yes)) {
+// Flag di selezione espliciti → modalità non interattiva (anche senza -y).
+// Nessun flag → TUI interattiva.
+if (hasFlags) {
   nonInteractive(args, uninstall);
 } else {
   interactive(uninstall).catch(e => { console.error(e); process.exit(1); });
