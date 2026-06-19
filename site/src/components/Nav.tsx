@@ -15,6 +15,7 @@ export function Nav() {
         <span className="hidden h-4 w-px bg-[var(--border)] sm:block" />
         <div className="hidden items-center gap-4 font-mono text-xs text-[var(--muted-foreground)] sm:flex">
           <Link href="/#skill" className="transition-colors hover:text-brand">skill</Link>
+          <Link href="/#toolbelt" className="transition-colors hover:text-brand">toolbelt</Link>
           <Link href="/#agent" className="transition-colors hover:text-brand">agent</Link>
           <Link href="/#installa" className="transition-colors hover:text-brand">installa</Link>
           <Link href="/come-funziona" className="transition-colors hover:text-brand">come funziona</Link>

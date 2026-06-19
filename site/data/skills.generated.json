@@ -10,9 +10,17 @@
     "DevOps",
     "Drupal",
     "Mobile",
+    "Tooling",
     "Workflow"
   ],
   "skills": [
+    {
+      "name": "ai-dev-toolbelt",
+      "description": "Use when setting up a dev environment, or when you need fast code search, navigation, or structural refactors. Documents the recommended CLI toolbelt for coding agents (ripgrep, fd, tree, ast-grep, gh) — what each does, when to prefer it over the classic tool, and how to install them.",
+      "category": "Tooling",
+      "legacy": false,
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills ai-dev-toolbelt -y"
+    },
     {
       "name": "cleversoft-design",
       "description": "Vecchio design system Cleversoft/akkaz incentrato sul profilo personale akkaz. Per nuovo lavoro di brand Cleversoft usa la skill cleversoft-design-system. Questa resta solo per retrocompatibilità.",
@@ -75,13 +83,6 @@
       "category": "Mobile",
       "legacy": false,
       "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills ionic-skills -y"
-    },
-    {
-      "name": "internal-skill",
-      "description": "Load this skill at the start of virtually every conversation that touches the internal-pwa project (the Ionic/React/Vite PWA under `internal-pwa/`). Relevant for any code change, commit, push, merge, build, deploy, rollback, version bump, or question about staging vs production. Covers Cloudflare Pages auto-build on redacted's account, branch model (`stage` preview → `main` production → `app.example.internal`), the mandatory `npm version` bump on every user-visible push to stage, the custom domain setup, wrangler multi-account workaround, and rollback procedure. Err on the side of loading it — most internal-pwa edits end in a commit that must follow the version-bump and branch-model rules documented here.",
-      "category": "DevOps",
-      "legacy": false,
-      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills internal-skill -y"
     },
     {
       "name": "plan-auditor",

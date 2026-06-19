@@ -9,7 +9,7 @@ Uso:
     python transcribe.py <file-audio> [opzioni]
 
 Opzioni:
-    --model    MODELLO   Modello Whisper (tiny|base|small|medium|large-v3|turbo). Default: turbo
+    --model    MODELLO   Modello Whisper (tiny|base|small|medium|large). Default: medium
     --language LINGUA    Codice lingua ISO (it, en, ...). Default: it
     --format   FORMATO   txt | md. Default: txt
     --output   PATH      Percorso file di output (default: stesso nome dell'audio)
@@ -68,6 +68,44 @@ def resolve_device(requested: str) -> str:
     else:
         print("⚠ Uso la CPU (più lento). GPU CUDA non disponibile o non richiesta.", file=sys.stderr)
     return device
+
+
+def install_audio_progress_bar():
+    """Rende leggibile la barra di avanzamento di Whisper.
+
+    Whisper mostra di default una barra tqdm che conta i *frame* del mel
+    spectrogram (poco parlanti). Questo aggancio la riformatta per mostrare
+    i **secondi di audio** processati sul totale, con percentuale ed ETA:
+
+        Trascrizione |█████████-------| 52%  2070/3981s audio [02:23<02:12]
+
+    Difensivo: se l'aggancio non riesce (versione di Whisper diversa), la
+    trascrizione prosegue con la barra nativa.
+    """
+    try:
+        import tqdm as _tqdm_mod
+        import whisper.transcribe as _wt
+        from whisper.audio import HOP_LENGTH, SAMPLE_RATE
+
+        factor = HOP_LENGTH / SAMPLE_RATE  # frame del mel -> secondi di audio
+        _BaseTqdm = _tqdm_mod.tqdm
+
+        class _AudioTqdm(_BaseTqdm):
+            def __init__(self, *a, **k):
+                if k.get("total"):
+                    k["total"] = k["total"] * factor
+                k["bar_format"] = (
+                    "Trascrizione |{bar}| {percentage:3.0f}%  "
+                    "{n:.0f}/{total:.0f}s audio [{elapsed}<{remaining}]"
+                )
+                super().__init__(*a, **k)
+
+            def update(self, n=1):
+                return super().update(n * factor)
+
+        _wt.tqdm.tqdm = _AudioTqdm
+    except Exception:
+        pass  # fallback silenzioso: resta la barra nativa in frame
 
 
 def fmt_ts(seconds: float) -> str:
@@ -130,9 +168,7 @@ def segments_to_paragraphs(segments, with_timestamps: bool):
 def main():
     ap = argparse.ArgumentParser(description="Trascrizione audio con Whisper + pulizia")
     ap.add_argument("audio", help="file audio da trascrivere")
-    # 'turbo' (large-v3-turbo, ~809M): qualità vicina a large-v3 ma ~3x più
-    # veloce di medium e con meno allucinazioni. Entra in ~6 GB di VRAM.
-    ap.add_argument("--model", default="turbo")
+    ap.add_argument("--model", default="medium")
     ap.add_argument("--language", default="it")
     ap.add_argument("--format", default="txt", choices=["txt", "md"])
     ap.add_argument("--output")
@@ -157,6 +193,7 @@ def main():
     print(f"Caricamento modello Whisper '{args.model}' su {device}...", file=sys.stderr)
     model = whisper.load_model(args.model, device=device)
     print(f"Trascrizione in corso: {args.audio}", file=sys.stderr)
+    install_audio_progress_bar()
     # fp16 solo su GPU; su CPU va disattivato per evitare il warning di Whisper.
     result = model.transcribe(
         args.audio, language=args.language, verbose=False, fp16=(device == "cuda")

@@ -3,6 +3,7 @@ import { MicroLabel } from "@/components/MicroLabel";
 import { SkillExplorer } from "@/components/SkillExplorer";
 import { AgentCard } from "@/components/AgentCard";
 import { InstallerSection } from "@/components/InstallerSection";
+import { ToolbeltSection } from "@/components/ToolbeltSection";
 import { catalog } from "@/lib/skills";
 
 export default function Home() {
@@ -46,6 +47,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <ToolbeltSection />
     </main>
   );
 }

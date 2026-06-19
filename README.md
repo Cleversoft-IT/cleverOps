@@ -74,7 +74,7 @@ Niente clone, niente registry pubblico — gira dal repo privato con la tua chia
 
 | Skill | In una riga |
 |---|---|
-| `(skill interna rimossa)` | Deploy PWA su Cloudflare Pages: branch model, versioning, rollback |
+| `ai-dev-toolbelt` | Toolbelt CLI per coding agent (rg, fd, tree, ast-grep, gh): quando usarli + script d'install |
 | `ionic-skills` | App Ionic/Capacitor: tab, paywall, RevenueCat, AdMob, i18n |
 | `frontend-design` | Interfacce distintive e production-grade, anti "AI-slop" |
 | `cleversoft-design-system` | **Design system aziendale Cleversoft** (formato impeccable: PRODUCT.md + DESIGN.md), token, asset, preview |
@@ -153,9 +153,10 @@ skill nel dettaglio, le opzioni avanzate e la struttura del repo.
 
 ### 🟩 DevOps & Frontend
 
-- **`(skill interna rimossa)`** — deploy **Cloudflare Pages** per PWA: branch model
-  `stage` (preview) → `main` (produzione), merge in main sempre esplicito,
-  versioning semver obbligatorio, comandi `wrangler`, procedura di rollback.
+- **`ai-dev-toolbelt`** — il **toolbelt CLI** che rende un coding agent più efficace:
+  `rg` (ripgrep), `fd`, `tree`, `ast-grep`, `gh`. Documenta *quando* preferirli ai
+  classici (grep/find/sed) e include uno **script d'installazione cross-OS**
+  (`scripts/install.sh`, rileva brew/apt/dnf/pacman/cargo/npm).
 - **`ionic-skills`** — best practice app **Ionic/Capacitor** (Angular/React/Vue):
   requisiti obbligatori (onboarding, paywall, settings), navigazione a tab,
   RevenueCat, AdMob, i18n.
@@ -204,6 +205,8 @@ npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git \
 | `--all` · `--skills a,b` · `--agents x.md` | cosa installare |
 | `--copy` / `--link` | copia (default) o symlink (solo da checkout git) |
 | `--ccstatusline` | installa anche la statusline (vedi sotto) |
+| `--toolbelt` | installa il toolbelt CLI (rg, fd, tree, ast-grep, gh) |
+| `--impeccable` | installa impeccable (design system, dipendenza esterna via npx) |
 | `-y` | nessuna conferma |
 
 ### Fallback senza Node — `install.sh`
@@ -239,7 +242,7 @@ cleverOps/
 
 ## 📜 Provenienza
 
-Skill consolidate da `akkaz/drupal-dev`, `repo interni Cleversoft` (plan-auditor),
-`repo interni Cleversoft`, `akkaz/AIportfolio` e dalle install globali
-`~/.claude` / `~/.codex`. Il repo `akkaz/vibe-prompt` è stato archiviato e i
-suoi prompt storici sono in `legacy/vibe-prompt/`.
+Skill consolidate da `akkaz/drupal-dev`, `akkaz/AIportfolio`, da repo interni
+Cleversoft e dalle install globali `~/.claude` / `~/.codex`. Il repo
+`akkaz/vibe-prompt` è stato archiviato e i suoi prompt storici sono in
+`legacy/vibe-prompt/`.

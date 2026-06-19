@@ -43,6 +43,8 @@ function parseArgs(argv) {
     else if (t === '-y' || t === '--yes') a.flags.yes = true;
     else if (t === '--ccstatusline') a.flags.cc = true;
     else if (t === '--no-ccstatusline') a.flags.cc = false;
+    else if (t === '--toolbelt') a.flags.toolbelt = true;
+    else if (t === '--impeccable') a.flags.impeccable = true;
     else if (t === '--target') a.flags.target = argv[++i];
     else if (t === '--project') a.flags.project = argv[++i];
     else if (t === '--skills') a.flags.skills = argv[++i];
@@ -66,6 +68,8 @@ Flag non interattivi (provisioning):
   --all                           tutte le skill e gli agent
   --skills a,b   --agents x.md    selezione specifica
   --ccstatusline                  installa anche ccstatusline-gradient (npx)
+  --toolbelt                      installa il toolbelt CLI (rg, fd, tree, ast-grep, gh)
+  --impeccable                    installa impeccable (design system, esterno via npx)
   -y, --yes                       nessuna conferma
 `;
 
@@ -134,6 +138,22 @@ function runCcstatusline() {
   if (r.status !== 0) log.warn('ccstatusline: onboarding non completato.');
 }
 
+function runToolbelt() {
+  if (process.platform === 'win32') { log.warn('Toolbelt: script non supportato su Windows; vedi skill ai-dev-toolbelt.'); return; }
+  const script = join(SKILLS_DIR, 'ai-dev-toolbelt', 'scripts', 'install.sh');
+  if (!fs.existsSync(script)) { log.warn('Toolbelt: install.sh non trovato.'); return; }
+  log.info('Installo il toolbelt CLI (rg · fd · tree · ast-grep · gh)…');
+  const r = spawnSync('bash', [script], { stdio: 'inherit' });
+  if (r.status !== 0) log.warn('Toolbelt: installazione non completata (vedi output sopra).');
+}
+
+function runImpeccable() {
+  const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  log.info('Installo impeccable (design system, dipendenza esterna)…');
+  const r = spawnSync(npx, ['-y', 'impeccable', 'install'], { stdio: 'inherit' });
+  if (r.status !== 0) log.warn('impeccable: installazione non completata.');
+}
+
 const bail = (v) => { if (isCancel(v)) { cancel('Annullato.'); process.exit(0); } return v; };
 
 // ---------- non interattivo ----------
@@ -150,6 +170,8 @@ function nonInteractive(args, uninstall) {
     : doInstall({ targets, project, mode, skills, agents });
   console.log(results.join('\n'));
   if (!uninstall && f.cc) runCcstatusline();
+  if (!uninstall && f.toolbelt) runToolbelt();
+  if (!uninstall && f.impeccable) runImpeccable();
 }
 
 // ---------- interattivo ----------
@@ -219,6 +241,12 @@ async function interactive(uninstall) {
   if (!uninstall) {
     const cc = bail(await confirm({ message: 'Installare anche ccstatusline-gradient (statusline AI)?', initialValue: false }));
     if (cc) runCcstatusline();
+
+    const tb = bail(await confirm({ message: 'Installare il toolbelt CLI (rg, fd, tree, ast-grep, gh)?', initialValue: false }));
+    if (tb) runToolbelt();
+
+    const imp = bail(await confirm({ message: 'Installare impeccable (design system, dipendenza esterna)?', initialValue: false }));
+    if (imp) runImpeccable();
   }
   outro('Fatto. Riavvia Claude Code per caricare le novità.');
 }
@@ -227,7 +255,7 @@ async function interactive(uninstall) {
 const args = parseArgs(process.argv.slice(2));
 if (args.flags.help) { console.log(HELP); process.exit(0); }
 const uninstall = args._[0] === 'uninstall' || args._[0] === 'remove';
-const hasFlags = args.flags.all || args.flags.skills || args.flags.agents || args.flags.target;
+const hasFlags = args.flags.all || args.flags.skills || args.flags.agents || args.flags.target || args.flags.toolbelt || args.flags.impeccable;
 if (hasFlags && !process.stdout.isTTY || (hasFlags && args.flags.yes)) {
   nonInteractive(args, uninstall);
 } else {
