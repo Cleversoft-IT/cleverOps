@@ -22,7 +22,7 @@ export function AgentCard({ agent }: { agent: Agent }) {
           installa
         </span>
         <div className="mt-2">
-          <CommandBlock command={agent.command} />
+          <CommandBlock command={agent.command} emphasize={`${agent.name}.md`} />
         </div>
       </div>
     </article>

@@ -3,7 +3,7 @@ import type { Skill } from "@/lib/skills";
 
 export function SkillCard({ skill }: { skill: Skill }) {
   return (
-    <article className="flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm transition-colors hover:bg-[color-mix(in_oklch,var(--card)_94%,var(--foreground))]">
+    <article className={`flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm transition-colors hover:bg-[color-mix(in_oklch,var(--card)_94%,var(--foreground))] ${skill.legacy ? "opacity-70 hover:opacity-100" : ""}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="inline-flex items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
           <span className="h-1 w-1 shrink-0 rounded-full bg-brand" aria-hidden />
@@ -29,7 +29,7 @@ export function SkillCard({ skill }: { skill: Skill }) {
           installa
         </span>
         <div className="mt-2">
-          <CommandBlock command={skill.command} />
+          <CommandBlock command={skill.command} emphasize={skill.name} />
         </div>
       </div>
     </article>

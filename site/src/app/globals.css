@@ -41,7 +41,9 @@
   --card: #ffffff;
   --card-foreground: oklch(0.141 0.005 285.823);
   --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
+  /* zinc-600 (#52525b): ~6.4:1 sullo sfondo #f0f0f0 → AA anche per il testo body
+     (zinc-500 era ~4.24:1, sotto AA). */
+  --muted-foreground: oklch(0.442 0.017 285.8);
   --border: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
 

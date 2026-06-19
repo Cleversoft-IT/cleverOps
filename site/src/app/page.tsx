@@ -33,8 +33,7 @@ export default function Home() {
       {/* AGENT */}
       <section id="agent" className="border-b border-[var(--border)] px-6 py-16 sm:py-24">
         <div className="mx-auto max-w-5xl">
-          <MicroLabel>Agent</MicroLabel>
-          <h2 className="mt-4 text-balance font-mono text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+          <h2 className="text-balance font-mono text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
             Non solo skill: anche agent dedicati<span className="cursor-blink">_</span>
           </h2>
           <p className="mt-4 max-w-2xl font-sans text-lg text-[var(--muted-foreground)]">

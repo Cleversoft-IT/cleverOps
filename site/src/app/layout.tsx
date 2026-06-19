@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: "cleverOps — DevOps & AI skills di Cleversoft",
   description:
     "Le skill e gli agent DevOps/AI di Cleversoft IT per Claude Code e Codex. Catalogo, comandi copia-incolla, installer.",
-  metadataBase: new URL("https://cleverops.vercel.app"),
+  metadataBase: new URL("https://site-two-bice-65.vercel.app"),
   openGraph: {
     title: "cleverOps — DevOps & AI skills di Cleversoft",
     description:

@@ -1,5 +1,4 @@
 import { Terminal } from "lucide-react";
-import { MicroLabel } from "./MicroLabel";
 import { CommandBlock } from "./CommandBlock";
 import { catalog } from "@/lib/skills";
 
@@ -14,8 +13,7 @@ export function InstallerSection() {
   return (
     <section id="installa" className="px-6 py-16 sm:py-24">
       <div className="mx-auto max-w-5xl">
-        <MicroLabel>Installer</MicroLabel>
-        <h2 className="mt-4 text-balance font-mono text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
+        <h2 className="text-balance font-mono text-3xl font-semibold tracking-[-0.02em] sm:text-4xl">
           Una riga e sei operativo<span className="cursor-blink">_</span>
         </h2>
         <p className="mt-4 max-w-2xl font-sans text-lg text-[var(--muted-foreground)]">
