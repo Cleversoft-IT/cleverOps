@@ -42,6 +42,36 @@ const detectHarness = () => ({
   codex:  fs.existsSync(CODEX_HOME),
 });
 
+// ---------- stile: ANSI truecolor, dep-free (degrada senza colore) ----------
+// NB: il colore va SOLO dove ho controllo pieno (banner/outro stampati a mano).
+// Dentro i box di @clack (note/label) gli escape ANSI rompono il calcolo larghezza.
+const COLOR = process.stdout.isTTY && !process.env.NO_COLOR;
+const RST = COLOR ? '\x1b[0m' : '';
+const fgRGB = (r, g, b, s) => (COLOR ? `\x1b[38;2;${r};${g};${b}m${s}${RST}` : s);
+const dim = (s) => (COLOR ? `\x1b[2m${s}${RST}` : s);
+const bold = (s) => (COLOR ? `\x1b[1m${s}${RST}` : s);
+const coral = (s) => fgRGB(255, 64, 23, s);
+const hexRgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+function gradient(text, stops = ['#ff4017', '#ff8a5c']) {
+  if (!COLOR) return text;
+  const pts = stops.map(hexRgb);
+  const chars = [...text];
+  const n = Math.max(chars.length - 1, 1);
+  return chars.map((ch, i) => {
+    const seg = (i / n) * (pts.length - 1);
+    const k = Math.min(Math.floor(seg), pts.length - 2);
+    const f = seg - k, a = pts[k], b = pts[k + 1];
+    const m = (j) => Math.round(a[j] + (b[j] - a[j]) * f);
+    return fgRGB(m(0), m(1), m(2), ch);
+  }).join('');
+}
+function printBanner(sub) {
+  console.log();
+  console.log('  ' + bold(gradient('cleverOps')) + coral('_'));
+  console.log('  ' + dim(sub));
+  console.log();
+}
+
 // ---------- arg parsing (non interattivo) ----------
 function parseArgs(argv) {
   const a = { _: [], flags: {} };
@@ -197,10 +227,10 @@ function skillHint(name) {
 
 // ---------- interattivo ----------
 async function interactive(uninstall) {
-  intro(uninstall ? 'cleverOps — rimozione' : 'cleverOps — installer');
-
-  // Detection: quali harness sono installati su questa macchina
   const det = detectHarness();
+  printBanner(uninstall ? 'rimozione skill, agent ed extra' : 'DevOps & AI · skill, agent, tool · Claude Code & Codex');
+  intro(uninstall ? 'rimozione' : 'installer');
+
   const detList = [det.claude && 'Claude Code', det.codex && 'Codex'].filter(Boolean);
   note(detList.length ? detList.join(', ') : 'nessuno trovato (scegli tu dove)', 'Harness rilevati');
 
@@ -267,11 +297,17 @@ async function interactive(uninstall) {
     }
   }
 
-  // 3) CONFERMA
-  const parts = [];
-  if (needPlacement) parts.push(`${skills.length} skill + ${agents.length} agent → [${targets.join(', ')}]${uninstall ? '' : ` (${mode})`}`);
-  if (extras.length) parts.push(`extra: ${extras.join(', ')}`);
-  const ok = bail(await confirm({ message: `${uninstall ? 'Rimuovo' : 'Installo'} ${parts.join(' · ')}?` }));
+  // 3) RIEPILOGO + CONFERMA
+  const recap = [];
+  if (needPlacement) {
+    recap.push(`skill   ${skills.length ? skills.join(', ') : '—'}`);
+    recap.push(`agent   ${agents.length ? agents.map(a => a.replace(/\.md$/, '')).join(', ') : '—'}`);
+    recap.push(`dove    ${targets.join(', ')}${uninstall ? '' : `  ·  ${mode}`}`);
+  }
+  if (extras.length) recap.push(`extra   ${extras.join(', ')}`);
+  note(recap.join('\n'), uninstall ? 'Riepilogo rimozione' : 'Riepilogo');
+
+  const ok = bail(await confirm({ message: uninstall ? 'Procedo con la rimozione?' : "Procedo con l'installazione?" }));
   if (!ok) { outro('Annullato.'); return; }
 
   // 4) skill/agent
@@ -292,7 +328,7 @@ async function interactive(uninstall) {
   if (extras.includes('ccstatusline')) runCcstatusline();
   if (extras.includes('impeccable')) runImpeccable();
 
-  outro('Fatto. Riavvia Claude Code per caricare le novità.');
+  outro(coral('✓') + ' Fatto. Riavvia Claude Code / Codex per caricare le novità.');
 }
 
 // ---------- main ----------
