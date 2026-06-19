@@ -14,7 +14,7 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "cleverOps — DevOps & AI skills di Cleversoft",
   description:
-    "Le skill e gli agent DevOps/AI di Cleversoft IT per Claude Code e Codex. Catalogo, comandi copia-incolla, installer.",
+    "Riferimento interno del team Cleversoft: skill, agent, toolbelt CLI e design system per Claude Code e Codex. Catalogo, comandi copia-incolla, installer.",
   metadataBase: new URL("https://cleverops.akkaz.dev"),
   openGraph: {
     title: "cleverOps — DevOps & AI skills di Cleversoft",

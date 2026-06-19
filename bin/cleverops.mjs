@@ -140,7 +140,7 @@ function runCcstatusline() {
 
 function runToolbelt() {
   if (process.platform === 'win32') { log.warn('Toolbelt: script non supportato su Windows; vedi skill ai-dev-toolbelt.'); return; }
-  const script = join(SKILLS_DIR, 'ai-dev-toolbelt', 'scripts', 'install.sh');
+  const script = join(PKG_ROOT, 'extras', 'toolbelt', 'install.sh');
   if (!fs.existsSync(script)) { log.warn('Toolbelt: install.sh non trovato.'); return; }
   log.info('Installo il toolbelt CLI (rg · fd · tree · ast-grep · gh)…');
   const r = spawnSync('bash', [script], { stdio: 'inherit' });

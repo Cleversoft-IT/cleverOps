@@ -27,13 +27,17 @@ const CATEGORY = {
   "ionic-skills": "Mobile",
   "transcribe": "AI",
   "plan-auditor": "Workflow",
-  "ai-dev-toolbelt": "Tooling",
   "frontend-design": "Design",
   "cleversoft-design": "Design",
   "cleversoft-design-system": "Design",
 };
 
 const LEGACY = new Set(["cleversoft-design"]);
+
+// Harness di destinazione per skill (default: claude). plan-auditor è pensata per Codex.
+const TARGET = {
+  "plan-auditor": "codex",
+};
 
 // Parser frontmatter minimale: blocco tra i primi due "---".
 function parseFrontmatter(md) {
@@ -62,12 +66,14 @@ function readSkill(name) {
   if (!fs.existsSync(file)) return null;
   const fm = parseFrontmatter(fs.readFileSync(file, "utf8"));
   const description = (fm.description || "").replace(/^\[LEGACY[^\]]*\]\s*/i, "").trim();
+  const target = TARGET[name] || "claude";
   return {
     name,
     description,
     category: CATEGORY[name] || "Altro",
     legacy: LEGACY.has(name) || /\blegacy\b/i.test(fm.description || ""),
-    command: `npx github:${REPO} --target claude --skills ${name} -y`,
+    target,
+    command: `npx github:${REPO} --target ${target} --skills ${name} -y`,
   };
 }
 

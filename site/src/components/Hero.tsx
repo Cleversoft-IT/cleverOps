@@ -12,15 +12,15 @@ export function Hero() {
       <pre aria-hidden className="pointer-events-none absolute right-4 top-24 hidden font-mono text-xs leading-none text-[var(--zinc-300)] sm:block dark:text-[var(--zinc-700)]">┐</pre>
 
       <div className="mx-auto max-w-5xl">
-        <MicroLabel>Claude Code · Codex · Skills</MicroLabel>
+        <MicroLabel>Uso interno · Cleversoft</MicroLabel>
         <h1 className="mt-5 text-balance font-mono text-4xl font-semibold leading-[1.05] tracking-[-0.02em] sm:text-6xl">
-          Le nostre skill DevOps,
+          Lo stack interno per
           <br />
-          pronte all&apos;uso<span className="cursor-blink">_</span>
+          Claude Code &amp; Codex<span className="cursor-blink">_</span>
         </h1>
         <p className="mt-6 max-w-xl font-sans text-lg leading-relaxed text-[var(--muted-foreground)]">
-          Il toolkit di Cleversoft per Claude Code e Codex: Drupal, DevOps, AI e il design
-          system aziendale. Installale in una riga, copiale dove ti servono — niente fuffa.
+          Il riferimento del team: skill, agent, toolbelt CLI e design system che usiamo
+          ogni giorno. Trova il comando giusto, copialo e installalo dove ti serve.
         </p>
 
         <div className="mt-9 max-w-xl">

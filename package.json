@@ -10,6 +10,7 @@
     "bin/",
     "skills/",
     "agents/",
+    "extras/",
     "README.md"
   ],
   "engines": {

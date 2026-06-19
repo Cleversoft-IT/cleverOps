@@ -74,7 +74,6 @@ Niente clone, niente registry pubblico — gira dal repo privato con la tua chia
 
 | Skill | In una riga |
 |---|---|
-| `ai-dev-toolbelt` | Toolbelt CLI per coding agent (rg, fd, tree, ast-grep, gh): quando usarli + script d'install |
 | `ionic-skills` | App Ionic/Capacitor: tab, paywall, RevenueCat, AdMob, i18n |
 | `frontend-design` | Interfacce distintive e production-grade, anti "AI-slop" |
 | `cleversoft-design-system` | **Design system aziendale Cleversoft** (formato impeccable: PRODUCT.md + DESIGN.md), token, asset, preview |
@@ -153,10 +152,6 @@ skill nel dettaglio, le opzioni avanzate e la struttura del repo.
 
 ### 🟩 DevOps & Frontend
 
-- **`ai-dev-toolbelt`** — il **toolbelt CLI** che rende un coding agent più efficace:
-  `rg` (ripgrep), `fd`, `tree`, `ast-grep`, `gh`. Documenta *quando* preferirli ai
-  classici (grep/find/sed) e include uno **script d'installazione cross-OS**
-  (`scripts/install.sh`, rileva brew/apt/dnf/pacman/cargo/npm).
 - **`ionic-skills`** — best practice app **Ionic/Capacitor** (Angular/React/Vue):
   requisiti obbligatori (onboarding, paywall, settings), navigazione a tab,
   RevenueCat, AdMob, i18n.
@@ -218,11 +213,29 @@ Node:
 git clone git@github.com:Cleversoft-IT/cleverOps.git && cd cleverOps && ./install.sh
 ```
 
-### Componente extra: `ccstatusline-gradient`
+### Componenti esterni (non skill)
 
-La statusline che completa la suite **non è una skill** ma un pacchetto npm a sé
-([`akkaz/ccstatusline-gradient`](https://github.com/akkaz/ccstatusline-gradient)),
-con un proprio wizard. L'installer la propone come step finale, oppure:
+Tre cose **non sono skill** ma dipendenze esterne: l'installer le propone come step
+finali (o le installi a mano). Per usare i tool della belt non serve nessuna skill —
+basta che i binari siano sul sistema.
+
+**Toolbelt CLI** — `rg` (ripgrep), `fd`, `tree`, `ast-grep`, `gh`: i binari che rendono
+un coding agent più efficace (ricerca, refactor strutturale, GitHub). Script cross-OS
+in [`extras/toolbelt/`](extras/toolbelt/) (rileva brew/apt/dnf/pacman/cargo/npm).
+
+```bash
+npx github:Cleversoft-IT/cleverOps --toolbelt -y   # oppure: bash extras/toolbelt/install.sh
+```
+
+**impeccable** — design system in-the-loop (`PRODUCT.md` + `DESIGN.md`, comandi
+`critique`/`polish`/`live`). Dipendenza esterna, non la cloniamo.
+
+```bash
+npx github:Cleversoft-IT/cleverOps --impeccable -y   # oppure: npx impeccable install
+```
+
+**ccstatusline-gradient** — la statusline, pacchetto npm a sé
+([`akkaz/ccstatusline-gradient`](https://github.com/akkaz/ccstatusline-gradient)).
 
 ```bash
 npx -y ccstatusline-gradient@latest --onboard
@@ -237,6 +250,8 @@ cleverOps/
 ├── package.json        # pacchetto npm (private), bin `cleverops`
 ├── skills/             # le agent skill (SKILL.md, Claude Code + Codex)
 ├── agents/             # gli agent (Claude Code)
+├── extras/toolbelt/    # dipendenza esterna: install.sh dei CLI (rg, fd, tree, ast-grep, gh)
+├── site/               # mini-sito vetrina interno (Next.js, deploy Vercel)
 └── legacy/             # materiale storico (es. prompt del repo vibe-prompt)
 ```
 

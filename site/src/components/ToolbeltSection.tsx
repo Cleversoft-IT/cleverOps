@@ -13,9 +13,9 @@ export function ToolbeltSection() {
           I CLI che rendono l&apos;agente migliore<span className="cursor-blink">_</span>
         </h2>
         <p className="mt-4 max-w-2xl font-sans text-lg text-[var(--muted-foreground)]">
-          Binari esterni, non skill: ricerca veloce, refactor strutturali, operazioni GitHub.
-          La skill <code className="font-mono text-[0.95em] text-[var(--card-foreground)]">ai-dev-toolbelt</code> li
-          documenta e li installa in un colpo.
+          Binari di sistema (non skill): ricerca veloce, refactor strutturali, operazioni
+          GitHub. Per usarli non serve nessuna skill — basta installarli. Tutti in una
+          riga col comando qui sotto, o uno alla volta.
         </p>
 
         <div className="mt-6 max-w-xl">
