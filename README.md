@@ -47,13 +47,56 @@ cleverOps/
 
 ## Installazione
 
+Due metodi, complementari.
+
+### A) Plugin nativo Claude Code (consigliato — installa tutto)
+
 ```bash
-./install.sh            # symlink di skill e agent in ~/.claude e ~/.codex
-./install.sh --copy     # copia invece di symlinkare
+claude plugin marketplace add Cleversoft-IT/cleverOps
+claude plugin install cleverops@cleverops
 ```
 
-Dopo l'installazione le skill sono disponibili in Claude Code e Codex.
-La skill `transcribe` richiede l'env Python `~/.whisper-env` con Whisper.
+Usa il sistema di plugin ufficiale (`.claude-plugin/marketplace.json`): le
+skill si caricano on-demand, l'aggiornamento è `claude plugin update`. Per il
+repo privato serve essere autenticati (`gh auth login`).
+
+### B) Script guidato (subset / progetto / hosting)
+
+Per scegliere **cosa** installare e **dove** (utente, Codex, o un singolo
+progetto), in symlink o copia:
+
+```bash
+git clone git@github.com:Cleversoft-IT/cleverOps.git && cd cleverOps
+./install.sh                         # TUI interattiva (fzf o menu a numeri)
+```
+
+Non interattivo (es. provisioning di un nuovo hosting):
+
+```bash
+./install.sh --target project --project /var/www/sito --copy --all -y
+./install.sh --target claude,codex --link --skills drupal-expert,plan-auditor
+```
+
+| Quando | Modalità |
+|---|---|
+| Macchina di sviluppo tua | `--link` (symlink: single-source, si aggiorna col repo) |
+| Nuovo hosting / effimero | `--copy` (file autonomi, non dipende dal repo) |
+| Singolo progetto | `--target project` → installa in `<progetto>/.claude/` |
+
+Lo script fa backup di eventuali skill omonime non-symlink prima di sovrascrivere.
+
+### Componente extra: `ccstatusline-gradient`
+
+La statusline che fa parte della suite **non è una skill** ma un pacchetto npm
+a sé ([`akkaz/ccstatusline-gradient`](https://github.com/akkaz/ccstatusline-gradient)),
+con un proprio wizard. L'installer guidato la propone come step finale, oppure:
+
+```bash
+npx -y ccstatusline-gradient@latest --onboard
+# o, in install.sh:  ./install.sh --ccstatusline
+```
+
+> La skill `transcribe` richiede l'env Python `~/.whisper-env` con Whisper.
 
 ## Provenienza
 
