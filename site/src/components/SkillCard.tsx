@@ -1,19 +1,34 @@
 import { CommandBlock } from "./CommandBlock";
 import type { Skill } from "@/lib/skills";
 
+const TARGET_LABEL: Record<string, string> = {
+  claude: "Claude Code",
+  codex: "Codex",
+  project: "Progetto",
+};
+
 export function SkillCard({ skill }: { skill: Skill }) {
   return (
-    <article className={`flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm transition-colors hover:bg-[color-mix(in_oklch,var(--card)_94%,var(--foreground))] ${skill.legacy ? "opacity-70 hover:opacity-100" : ""}`}>
+    <article
+      className={`flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm transition-colors hover:bg-[color-mix(in_oklch,var(--card)_94%,var(--foreground))] ${
+        skill.legacy ? "opacity-70 hover:opacity-100" : ""
+      }`}
+    >
       <div className="flex items-center justify-between gap-2">
         <span className="inline-flex items-center gap-2 font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
           <span className="h-1 w-1 shrink-0 rounded-full bg-brand" aria-hidden />
           {skill.category}
         </span>
-        {skill.legacy && (
+        <div className="flex items-center gap-1.5">
+          {skill.legacy && (
+            <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
+              legacy
+            </span>
+          )}
           <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
-            legacy
+            {TARGET_LABEL[skill.target] ?? skill.target}
           </span>
-        )}
+        </div>
       </div>
 
       <h3 className="mt-4 font-mono text-lg font-semibold tracking-[-0.01em] text-[var(--card-foreground)]">

@@ -12,14 +12,14 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "cleverOps — DevOps & AI skills di Cleversoft",
+  title: "cleverOps — catalogo interno skill, agent e tool",
   description:
-    "Riferimento interno del team Cleversoft: skill, agent, toolbelt CLI e design system per Claude Code e Codex. Catalogo, comandi copia-incolla, installer.",
+    "Riferimento interno del team Cleversoft: skill, agent, toolbelt CLI e installer per Claude Code e Codex. Comandi copia-incolla.",
   metadataBase: new URL("https://cleverops.akkaz.dev"),
   openGraph: {
-    title: "cleverOps — DevOps & AI skills di Cleversoft",
+    title: "cleverOps — catalogo interno skill, agent e tool",
     description:
-      "Skill e agent per Claude Code e Codex: Drupal, DevOps, AI, design system. Codice pulito, niente fuffa.",
+      "Skill, agent, toolbelt e installer per Claude Code e Codex. Riferimento interno Cleversoft.",
     locale: "it_IT",
     type: "website",
   },

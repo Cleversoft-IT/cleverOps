@@ -72,24 +72,25 @@ export function SkillExplorer() {
         </div>
       </div>
 
+      {/* conteggio risultati — feedback del filtro, non vanity */}
+      <p className="mt-4 font-mono text-xs text-[var(--muted-foreground)]">
+        {filtered.length} di {catalog.skills.length}
+      </p>
+
       {/* griglia */}
       {filtered.length > 0 ? (
-        <div className="mt-8 grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+        <div className="mt-3 grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
           {filtered.map((s) => (
             <SkillCard key={s.name} skill={s} />
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-lg border border-dashed border-[var(--border)] p-10 text-center">
+        <div className="mt-3 rounded-lg border border-dashed border-[var(--border)] p-10 text-center">
           <p className="font-mono text-sm text-[var(--muted-foreground)]">
-            Nessuna skill per “{query}”<span className="cursor-blink">_</span>
+            Nessuna skill per “{query}”
           </p>
         </div>
       )}
-
-      <p className="mt-6 font-mono text-xs text-[var(--muted-foreground)]">
-        {filtered.length} di {catalog.skills.length} skill
-      </p>
     </div>
   );
 }

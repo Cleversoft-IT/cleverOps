@@ -1,10 +1,13 @@
 import data from "../../data/skills.generated.json";
 
+export type Target = "claude" | "codex" | "project";
+
 export type Skill = {
   name: string;
   description: string;
   category: string;
   legacy: boolean;
+  target: Target;
   command: string;
 };
 
