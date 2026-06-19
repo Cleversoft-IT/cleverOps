@@ -1,36 +1,116 @@
-# cleverOps
-
-Suite **DevOps / AI** di Cleversoft IT (e akkaz): le _agent skill_ e gli
-_agent_ riutilizzabili, in un'unica fonte condivisa tra **Claude Code** e
-**Codex**, così da eliminare le copie sparse nei singoli progetti.
-
-## Quick start
-
-Nella sessione Claude Code (col `!` davanti per eseguirlo nella shell):
+<div align="center">
 
 ```
+        _                       ___
+   ____| | _____   _____ _ __  / _ \ _ __  ___
+  / ___| |/ _ \ \ / / _ \ '__|| | | | '_ \/ __|
+ | (__ | |  __/\ V /  __/ |   | |_| | |_) \__ \
+  \___|_|\___| \_/ \___|_|    \___/| .__/|___/
+                                   |_|
+```
+
+**La toolbox AI/DevOps di Cleversoft IT** · _una sola fonte, condivisa tra Claude Code e Codex_
+
+![skills](https://img.shields.io/badge/skills-11-ff4017?style=flat-square)
+![agents](https://img.shields.io/badge/agents-1-ff4017?style=flat-square)
+![Claude Code](https://img.shields.io/badge/Claude_Code-✓-blue?style=flat-square)
+![Codex](https://img.shields.io/badge/Codex-✓-blue?style=flat-square)
+![install](https://img.shields.io/badge/install-npx_one--liner-22c55e?style=flat-square)
+
+</div>
+
+---
+
+## ⚡ Installa adesso
+
+Una riga, dentro Claude Code (col `!` davanti per eseguirla nella shell):
+
+```bash
 ! npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git
 ```
 
-Parte una **TUI interattiva**: scegli *dove* installare, *cosa* installare e
-confermi. Niente clone, niente `npm publish`, niente registry pubblico — gira
-direttamente dal repo privato usando la tua autenticazione SSH a GitHub.
+Parte una **TUI interattiva**: scegli *dove* installare, *cosa* installare, confermi. Fine.
+Niente clone, niente registry pubblico — gira dal repo privato con la tua chiave SSH.
 
-## Come funziona
+> 💡 Non serve sapere altro per iniziare. Le sezioni sotto servono solo quando vuoi
+> personalizzare o capire cosa fa ogni pezzo.
+
+### Ricette pronte all'uso
+
+| Voglio… | Comando |
+|---|---|
+| 🎛️ **Scegliere a mano** (consigliato) | `npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git` |
+| 🌍 **Tutto, per tutti i progetti** | `… --target claude,codex --all -y` |
+| 📁 **Tutto, solo in questo progetto** | `… --target project --project . --all -y` |
+| 🎯 **Solo alcune skill** | `… --target claude --skills drupal-expert,plan-auditor -y` |
+| 🧹 **Disinstallare** | `… uninstall --target project --project . --all -y` |
+
+<sub>`…` = `npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git`</sub>
+
+---
+
+## 📦 Cosa c'è dentro
+
+> A colpo d'occhio. La spiegazione estesa di ciascuna è [più sotto](#-le-skill-in-dettaglio).
+
+### 🟧 Drupal
+
+| Skill | In una riga |
+|---|---|
+| `drupal-expert` | Sviluppo Drupal 10/11, filosofia *research-first* (contrib prima del custom) |
+| `drupal-migration` | Migrate API: D7→D10/11, import CSV / JSON / API, process plugin |
+| `drupal-security` | Sicurezza proattiva: blocca SQL injection, XSS, access bypass *mentre scrivi* |
+| `ddev-expert` | Ambienti DDEV: container, servizi, Xdebug, performance, CI/CD |
+| `docker-local` | Sviluppo locale con Docker Compose (non-DDEV) |
+
+### 🟦 Workflow AI
+
+| Skill | In una riga |
+|---|---|
+| `plan-auditor` | Revisiona i piani di implementazione *prima* di scrivere codice |
+| `transcribe` | Audio → testo con Whisper locale (GPU), ripulito e impaginato |
+
+### 🟩 DevOps & Frontend
+
+| Skill | In una riga |
+|---|---|
+| `(skill interna rimossa)` | Deploy PWA su Cloudflare Pages: branch model, versioning, rollback |
+| `ionic-skills` | App Ionic/Capacitor: tab, paywall, RevenueCat, AdMob, i18n |
+| `frontend-design` | Interfacce distintive e production-grade, anti "AI-slop" |
+| `cleversoft-design` | Design system Cleversoft/akkaz: palette, tipografia, componenti, asset |
+
+### 🤖 Agent
+
+| Agent | In una riga |
+|---|---|
+| `cleversoft-preventivi-creator` | Intervista il cliente e genera preventivi professionali Cleversoft IT |
+
+---
+
+<br>
+
+# 📖 La documentazione completa
+
+Da qui in poi è la parte di riferimento: come funziona l'installer, cosa fa ogni
+skill nel dettaglio, le opzioni avanzate e la struttura del repo.
+
+## Come funziona l'installer
 
 - **`npx git+ssh://…`** clona il repo in una cartella temporanea, installa le
-  dipendenze ed esegue l'installer. Non serve pubblicare il pacchetto.
+  dipendenze ed esegue l'installer. Non serve pubblicare il pacchetto su npm.
 - **Dove installa** (lo scegli nella TUI, anche più di uno insieme):
   - **Progetto** → `<cartella>/.claude/` — *solo quel progetto*, non globale.
   - **Claude Code (utente)** → `~/.claude/` — disponibile in tutti i progetti.
   - **Codex (utente)** → `~/.codex/`.
 - **Copia vs symlink**: via `npx` i file vivono in una cache effimera, quindi
-  l'installer **copia** (file autonomi). Il symlink — single source che si
-  aggiorna col repo — è disponibile solo eseguendo da un checkout git.
+  l'installer **copia** (file autonomi). Il **symlink** — single source che si
+  aggiorna automaticamente col repo — è disponibile solo eseguendo da un checkout
+  git locale (`./install.sh --link`). È l'opzione giusta se sviluppi le skill:
+  modifichi una volta nel repo e l'aggiornamento si propaga ovunque.
 - **Sicuro**: se trova una skill omonima non-symlink, ne fa il **backup**
-  (`.bak-<timestamp>`) prima di sovrascrivere. C'è anche `uninstall`.
+  (`.bak-<timestamp>`) prima di sovrascrivere. Niente viene perso per sbaglio.
 
-## Cosa puoi installare
+## 🔧 Le skill in dettaglio
 
 ### 🟧 Drupal
 
@@ -66,7 +146,9 @@ direttamente dal repo privato usando la tua autenticazione SSH a GitHub.
 - **`transcribe`** — audio (mp3, wav, m4a, mp4…) → testo con **Whisper**
   locale. Non un blob grezzo: segmenta in paragrafi sulle pause, ripulisce
   (filler "ehm/uhm", spazi, punteggiatura, maiuscole), esporta in `txt` o `md`
-  con metadati, opzione `--timestamps`. Richiede l'env `~/.whisper-env`.
+  con metadati, opzione `--timestamps`. Usa la **GPU NVIDIA** in automatico se
+  presente (`--device cuda` per forzarla, `--device cpu` per escluderla) e
+  stampa sempre quale device sta usando. Richiede l'env `~/.whisper-env`.
 
 ### 🟩 DevOps & Frontend
 
@@ -90,7 +172,7 @@ direttamente dal repo privato usando la tua autenticazione SSH a GitHub.
   consulenza, microservizi AI, web app) con i dati fiscali corretti; può
   produrre la versione sito interattiva con `/crea-sito`.
 
-## Installazione — opzioni avanzate
+## ⚙️ Installazione — opzioni avanzate
 
 Flag per uso non interattivo (es. provisioning di un nuovo hosting):
 
@@ -136,7 +218,7 @@ con un proprio wizard. L'installer la propone come step finale, oppure:
 npx -y ccstatusline-gradient@latest --onboard
 ```
 
-## Struttura del repo
+## 🗂️ Struttura del repo
 
 ```
 cleverOps/
@@ -148,7 +230,7 @@ cleverOps/
 └── legacy/             # materiale storico (es. prompt del repo vibe-prompt)
 ```
 
-## Provenienza
+## 📜 Provenienza
 
 Skill consolidate da `akkaz/drupal-dev`, `repo interni Cleversoft` (plan-auditor),
 `repo interni Cleversoft`, `akkaz/AIportfolio` e dalle install globali
