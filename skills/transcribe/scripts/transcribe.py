@@ -13,8 +13,12 @@ Opzioni:
     --language LINGUA    Codice lingua ISO (it, en, ...). Default: it
     --format   FORMATO   txt | md. Default: txt
     --output   PATH      Percorso file di output (default: stesso nome dell'audio)
+    --device   DEVICE    auto | cuda | cpu. Default: auto (usa la GPU se disponibile)
     --raw                Salva il testo grezzo senza pulizia/segmentazione
     --timestamps         Aggiunge i timestamp [mm:ss] a inizio di ogni paragrafo
+
+Il device usato viene sempre stampato prima di iniziare. Con --device cuda lo
+script si interrompe se la GPU non è disponibile (niente fallback silenzioso su CPU).
 """
 
 import argparse
@@ -32,6 +36,38 @@ FILLERS = {
 PARAGRAPH_GAP = 2.0
 # Lunghezza massima (caratteri) di un paragrafo prima di forzare l'a capo
 PARAGRAPH_MAX_CHARS = 600
+
+
+def resolve_device(requested: str) -> str:
+    """Risolve e verifica il device, esplicitandolo prima dello start.
+
+    requested: "auto" | "cuda" | "cpu".
+    - "auto": usa cuda se disponibile, altrimenti cpu (con avviso).
+    - "cuda": fallisce se non c'è una GPU CUDA (niente fallback silenzioso).
+    - "cpu": forza la CPU.
+    """
+    try:
+        import torch
+    except ImportError:
+        sys.exit("Errore: 'torch' non disponibile. Usa l'env ~/.whisper-env")
+
+    has_cuda = torch.cuda.is_available()
+
+    if requested == "cuda" and not has_cuda:
+        sys.exit("Errore: --device cuda richiesto ma nessuna GPU CUDA disponibile.")
+
+    if requested == "cpu":
+        device = "cpu"
+    elif requested == "cuda" or (requested == "auto" and has_cuda):
+        device = "cuda"
+    else:
+        device = "cpu"
+
+    if device == "cuda":
+        print(f"✓ GPU: {torch.cuda.get_device_name(0)} → uso CUDA", file=sys.stderr)
+    else:
+        print("⚠ Uso la CPU (più lento). GPU CUDA non disponibile o non richiesta.", file=sys.stderr)
+    return device
 
 
 def fmt_ts(seconds: float) -> str:
@@ -98,6 +134,7 @@ def main():
     ap.add_argument("--language", default="it")
     ap.add_argument("--format", default="txt", choices=["txt", "md"])
     ap.add_argument("--output")
+    ap.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     ap.add_argument("--raw", action="store_true")
     ap.add_argument("--timestamps", action="store_true")
     args = ap.parse_args()
@@ -110,13 +147,18 @@ def main():
     except ImportError:
         sys.exit("Errore: modulo 'whisper' non disponibile. Usa l'env ~/.whisper-env")
 
+    device = resolve_device(args.device)
+
     base = os.path.splitext(args.audio)[0]
     out_path = args.output or f"{base}.{args.format}"
 
-    print(f"Caricamento modello Whisper '{args.model}'...", file=sys.stderr)
-    model = whisper.load_model(args.model)
+    print(f"Caricamento modello Whisper '{args.model}' su {device}...", file=sys.stderr)
+    model = whisper.load_model(args.model, device=device)
     print(f"Trascrizione in corso: {args.audio}", file=sys.stderr)
-    result = model.transcribe(args.audio, language=args.language, verbose=False)
+    # fp16 solo su GPU; su CPU va disattivato per evitare il warning di Whisper.
+    result = model.transcribe(
+        args.audio, language=args.language, verbose=False, fp16=(device == "cuda")
+    )
 
     if args.raw:
         body = result["text"].strip()

@@ -43,9 +43,15 @@ l'interprete dedicato `~/.whisper-env/bin/python` (Whisper preinstallato).
 | `--language en` | lingua diversa dall'italiano (default `it`) |
 | `--raw` | testo grezzo Whisper senza pulizia/segmentazione |
 | `--output PATH` | percorso file di output personalizzato |
+| `--device cuda` | forza la GPU (errore se non disponibile, niente fallback su CPU) |
+| `--device cpu` | forza la CPU |
 
 Lo `stdout` dello script è **solo il path** del file prodotto (i messaggi
 di avanzamento vanno su stderr), così è componibile in pipeline.
+
+Di default (`--device auto`) lo script usa la GPU NVIDIA se disponibile,
+altrimenti la CPU, e **stampa sempre su stderr il device scelto** prima di
+iniziare — così si verifica a colpo d'occhio se sta girando su GPU.
 
 ## Note
 
