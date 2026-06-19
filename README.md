@@ -17,6 +17,10 @@
 ![Codex](https://img.shields.io/badge/Codex-✓-blue?style=flat-square)
 ![install](https://img.shields.io/badge/install-npx_one--liner-22c55e?style=flat-square)
 
+<br>
+
+![Installer TUI di cleverOps in azione](extras/demo/cleverops.gif)
+
 </div>
 
 ---

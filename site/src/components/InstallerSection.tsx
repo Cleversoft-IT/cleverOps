@@ -32,6 +32,17 @@ export function InstallerSection() {
       }
       divider={false}
     >
+      <div className="mb-8 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--zinc-950)]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/cleverops-tui.gif"
+          alt="La TUI di installazione cleverOps: banner, filtro skill, selezione"
+          width={1000}
+          height={720}
+          className="h-auto w-full"
+        />
+      </div>
+
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="flex flex-col rounded-lg border border-[var(--border)] bg-[var(--card)] p-5 shadow-sm">
           <span className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--muted-foreground)]">
