@@ -47,43 +47,46 @@ cleverOps/
 
 ## Installazione
 
-Due metodi, complementari.
+### Via `npx` (consigliato) — installer TUI
 
-### A) Plugin nativo Claude Code (consigliato — installa tutto)
-
-```bash
-claude plugin marketplace add Cleversoft-IT/cleverOps
-claude plugin install cleverops@cleverops
-```
-
-Usa il sistema di plugin ufficiale (`.claude-plugin/marketplace.json`): le
-skill si caricano on-demand, l'aggiornamento è `claude plugin update`. Per il
-repo privato serve essere autenticati (`gh auth login`).
-
-### B) Script guidato (subset / progetto / hosting)
-
-Per scegliere **cosa** installare e **dove** (utente, Codex, o un singolo
-progetto), in symlink o copia:
+Nessun clone, niente registry pubblico: parte direttamente dal repo privato
+con la tua auth SSH e apre la TUI interattiva (scegli **dove**, **cosa** e
+**come** installare).
 
 ```bash
-git clone git@github.com:Cleversoft-IT/cleverOps.git && cd cleverOps
-./install.sh                         # TUI interattiva (fzf o menu a numeri)
+npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git
 ```
 
-Non interattivo (es. provisioning di un nuovo hosting):
+Non interattivo (provisioning di un nuovo hosting/progetto):
 
 ```bash
-./install.sh --target project --project /var/www/sito --copy --all -y
-./install.sh --target claude,codex --link --skills drupal-expert,plan-auditor
+npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git \
+  --target project --project /var/www/sito --all -y
+# rimozione:
+npx git+ssh://git@github.com/Cleversoft-IT/cleverOps.git uninstall --target claude --all -y
 ```
 
-| Quando | Modalità |
+| Flag | Effetto |
 |---|---|
-| Macchina di sviluppo tua | `--link` (symlink: single-source, si aggiorna col repo) |
-| Nuovo hosting / effimero | `--copy` (file autonomi, non dipende dal repo) |
-| Singolo progetto | `--target project` → installa in `<progetto>/.claude/` |
+| `--target claude,codex,project` | dove installare (`project` → `<dir>/.claude/`) |
+| `--project PATH` | cartella del progetto (default cwd) |
+| `--all` / `--skills a,b` / `--agents x.md` | cosa installare |
+| `--copy` / `--link` | copia (default) o symlink (solo da checkout git) |
+| `--ccstatusline` | installa anche la statusline (vedi sotto) |
+| `-y` | nessuna conferma |
 
-Lo script fa backup di eventuali skill omonime non-symlink prima di sovrascrivere.
+> Via `npx` i file stanno nella cache npm effimera: l'installer usa sempre la
+> **copia**. I symlink (single-source che si aggiorna col repo) sono possibili
+> solo da un checkout: `git clone … && cd cleverOps && npm i && ./bin/cleverops.mjs`.
+
+### Fallback senza Node — `install.sh`
+
+Stessa logica in bash puro (TUI via `fzf` o menu a numeri), per macchine senza
+Node:
+
+```bash
+git clone git@github.com:Cleversoft-IT/cleverOps.git && cd cleverOps && ./install.sh
+```
 
 ### Componente extra: `ccstatusline-gradient`
 

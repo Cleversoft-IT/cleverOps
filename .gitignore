@@ -5,3 +5,5 @@ __pycache__/
 *.wav
 *.m4a
 *.mp4
+node_modules/
+package-lock.json

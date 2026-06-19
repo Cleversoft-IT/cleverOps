@@ -1,0 +1,29 @@
+{
+  "name": "@cleversoft/cleverops",
+  "version": "0.1.0",
+  "description": "Suite DevOps/AI di Cleversoft IT: skill Drupal, plan-auditor, transcribe, design e agent preventivi per Claude Code e Codex. Installer TUI.",
+  "type": "module",
+  "bin": {
+    "cleverops": "bin/cleverops.mjs"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "agents/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.5.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Cleversoft-IT/cleverOps.git"
+  },
+  "author": "Cleversoft IT <giomarco@cleversoft.it>",
+  "keywords": ["drupal", "devops", "ai", "whisper", "plan-auditor", "claude-code", "codex", "skills"],
+  "license": "UNLICENSED",
+  "private": true
+}
