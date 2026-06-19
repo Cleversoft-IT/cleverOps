@@ -52,23 +52,70 @@ const dim = (s) => (COLOR ? `\x1b[2m${s}${RST}` : s);
 const bold = (s) => (COLOR ? `\x1b[1m${s}${RST}` : s);
 const coral = (s) => fgRGB(255, 64, 23, s);
 const hexRgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const VERSION = (() => { try { return JSON.parse(fs.readFileSync(join(PKG_ROOT, 'package.json'), 'utf8')).version; } catch { return ''; } })();
+
+// Palette "splash" — coral del brand spinto verso oro/magenta (solo per il banner one-time)
+const SPLASH = ['#e63610', '#ff4017', '#ff7a2f', '#ffb84d', '#ff4d8d'];
+
+const lerpStops = (pts, t) => {
+  const seg = Math.min(Math.max(t, 0), 1) * (pts.length - 1);
+  const k = Math.min(Math.floor(seg), pts.length - 2);
+  const f = seg - k, a = pts[k], b = pts[k + 1];
+  return [0, 1, 2].map((j) => Math.round(a[j] + (b[j] - a[j]) * f));
+};
+
+// gradiente orizzontale su una riga (per il wordmark compatto)
 function gradient(text, stops = ['#ff4017', '#ff8a5c']) {
   if (!COLOR) return text;
   const pts = stops.map(hexRgb);
   const chars = [...text];
   const n = Math.max(chars.length - 1, 1);
-  return chars.map((ch, i) => {
-    const seg = (i / n) * (pts.length - 1);
-    const k = Math.min(Math.floor(seg), pts.length - 2);
-    const f = seg - k, a = pts[k], b = pts[k + 1];
-    const m = (j) => Math.round(a[j] + (b[j] - a[j]) * f);
-    return fgRGB(m(0), m(1), m(2), ch);
-  }).join('');
+  return chars.map((ch, i) => { const [r, g, b] = lerpStops(pts, (i / n)); return fgRGB(r, g, b, ch); }).join('');
 }
-function printBanner(sub) {
+
+// gradiente DIAGONALE su un blocco ASCII-art (gli spazi restano trasparenti)
+function gradientArt(lines, stops = SPLASH) {
+  if (!COLOR) return lines.join('\n');
+  const pts = stops.map(hexRgb);
+  const H = Math.max(lines.length - 1, 1);
+  const W = Math.max(...lines.map((l) => l.length), 1);
+  return lines.map((line, y) => [...line].map((ch, x) => {
+    if (ch === ' ') return ch;
+    const [r, g, b] = lerpStops(pts, ((x / W) + (y / H)) / 2);
+    return fgRGB(r, g, b, ch);
+  }).join('')).join('\n');
+}
+
+// ASCII-art del wordmark (figlet: Slant / Small Slant). String.raw per preservare i backslash.
+const ART_SLANT = String.raw`
+        __                    ____
+  _____/ /__ _   _____  _____/ __ \____  _____
+ / ___/ / _ \ | / / _ \/ ___/ / / / __ \/ ___/
+/ /__/ /  __/ |/ /  __/ /  / /_/ / /_/ (__  )
+\___/_/\___/|___/\___/_/   \____/ .___/____/
+                               /_/
+`.split('\n').slice(1, -1);
+
+const ART_SMALL = String.raw`
+      __                 ____
+ ____/ /__ _  _____ ____/ __ \___  ___
+/ __/ / -_) |/ / -_) __/ /_/ / _ \(_-<
+\__/_/\__/|___/\__/_/  \____/ .__/___/
+                           /_/
+`.split('\n').slice(1, -1);
+
+function printBanner(det) {
+  const cols = process.stdout.columns || 80;
   console.log();
-  console.log('  ' + bold(gradient('cleverOps')) + coral('_'));
-  console.log('  ' + dim(sub));
+  if (COLOR && cols >= 50) console.log(gradientArt(ART_SLANT.map((l) => '  ' + l)));
+  else if (COLOR && cols >= 40) console.log(gradientArt(ART_SMALL.map((l) => '  ' + l)));
+  else console.log('  ' + bold(gradient('cleverOps')) + coral('_'));
+  console.log();
+  console.log('  ' + dim(`skill · agent · tool  ·  Claude Code & Codex${VERSION ? '  ·  v' + VERSION : ''}`));
+  if (det) {
+    const chip = (on, label) => (on ? coral('●') + ' ' + label : dim('○ ' + label));
+    console.log('  ' + dim('rilevati  ') + chip(det.claude, 'Claude Code') + '   ' + chip(det.codex, 'Codex'));
+  }
   console.log();
 }
 
@@ -228,11 +275,8 @@ function skillHint(name) {
 // ---------- interattivo ----------
 async function interactive(uninstall) {
   const det = detectHarness();
-  printBanner(uninstall ? 'rimozione skill, agent ed extra' : 'DevOps & AI · skill, agent, tool · Claude Code & Codex');
+  printBanner(det);
   intro(uninstall ? 'rimozione' : 'installer');
-
-  const detList = [det.claude && 'Claude Code', det.codex && 'Codex'].filter(Boolean);
-  note(detList.length ? detList.join(', ') : 'nessuno trovato (scegli tu dove)', 'Harness rilevati');
 
   // 1) COSA — skill, agent ed extra sono tutti scelte di prima classe
   const skills = bail(await multiselect({
