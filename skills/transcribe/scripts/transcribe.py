@@ -9,7 +9,7 @@ Uso:
     python transcribe.py <file-audio> [opzioni]
 
 Opzioni:
-    --model    MODELLO   Modello Whisper (tiny|base|small|medium|large). Default: medium
+    --model    MODELLO   Modello Whisper (tiny|base|small|medium|large-v3|turbo). Default: turbo
     --language LINGUA    Codice lingua ISO (it, en, ...). Default: it
     --format   FORMATO   txt | md. Default: txt
     --output   PATH      Percorso file di output (default: stesso nome dell'audio)
@@ -130,7 +130,9 @@ def segments_to_paragraphs(segments, with_timestamps: bool):
 def main():
     ap = argparse.ArgumentParser(description="Trascrizione audio con Whisper + pulizia")
     ap.add_argument("audio", help="file audio da trascrivere")
-    ap.add_argument("--model", default="medium")
+    # 'turbo' (large-v3-turbo, ~809M): qualità vicina a large-v3 ma ~3x più
+    # veloce di medium e con meno allucinazioni. Entra in ~6 GB di VRAM.
+    ap.add_argument("--model", default="turbo")
     ap.add_argument("--language", default="it")
     ap.add_argument("--format", default="txt", choices=["txt", "md"])
     ap.add_argument("--output")

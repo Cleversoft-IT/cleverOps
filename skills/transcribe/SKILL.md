@@ -39,7 +39,8 @@ l'interprete dedicato `~/.whisper-env/bin/python` (Whisper preinstallato).
 |---|---|
 | `--format md` | output Markdown con intestazione (file, modello, durata) |
 | `--timestamps` | prefissa ogni paragrafo con `[mm:ss]` |
-| `--model large` | qualità maggiore, più lento (default `medium`) |
+| `--model large-v3` | massima qualità (default `turbo`: quasi pari, ~3× più veloce, ~6 GB VRAM) |
+| `--model medium` | modello più piccolo (~5 GB VRAM) se `turbo` non entra |
 | `--language en` | lingua diversa dall'italiano (default `it`) |
 | `--raw` | testo grezzo Whisper senza pulizia/segmentazione |
 | `--output PATH` | percorso file di output personalizzato |
@@ -57,6 +58,10 @@ iniziare — così si verifica a colpo d'occhio se sta girando su GPU.
 
 - Formati audio/video supportati: tutto ciò che `ffmpeg` sa decodificare
   (mp3, wav, m4a, ogg, mp4, mov...).
+- Modello di default `turbo` (`large-v3-turbo`): rispetto a `medium` è ~3×
+  più veloce, più completo e con meno allucinazioni; richiede ~6 GB di VRAM
+  (scaricato una tantum, ~1,6 GB). Su macchine con poca VRAM o senza GPU usa
+  `--model medium`.
 - La pulizia è **conservativa**: rimuove spazi doppi, filler isolati
   ("ehm", "uhm"...), ripetizioni immediate e sistema la punteggiatura,
   senza riscrivere o riassumere il contenuto. Per una sintesi, trascrivi
