@@ -6,10 +6,7 @@ import { dirname, join, basename } from 'node:path';
 import fs from 'node:fs';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
-import {
-  intro, outro, multiselect, select, confirm, text,
-  isCancel, cancel, note, log, spinner,
-} from '@clack/prompts';
+// La TUI interattiva è in Ink (bin/tui.mjs), importata dinamicamente solo quando serve.
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PKG_ROOT = join(__dirname, '..');
@@ -42,82 +39,8 @@ const detectHarness = () => ({
   codex:  fs.existsSync(CODEX_HOME),
 });
 
-// ---------- stile: ANSI truecolor, dep-free (degrada senza colore) ----------
-// NB: il colore va SOLO dove ho controllo pieno (banner/outro stampati a mano).
-// Dentro i box di @clack (note/label) gli escape ANSI rompono il calcolo larghezza.
-const COLOR = process.stdout.isTTY && !process.env.NO_COLOR;
-const RST = COLOR ? '\x1b[0m' : '';
-const fgRGB = (r, g, b, s) => (COLOR ? `\x1b[38;2;${r};${g};${b}m${s}${RST}` : s);
-const dim = (s) => (COLOR ? `\x1b[2m${s}${RST}` : s);
-const bold = (s) => (COLOR ? `\x1b[1m${s}${RST}` : s);
-const coral = (s) => fgRGB(255, 64, 23, s);
-const hexRgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+// Versione del pacchetto (mostrata nel banner della TUI Ink).
 const VERSION = (() => { try { return JSON.parse(fs.readFileSync(join(PKG_ROOT, 'package.json'), 'utf8')).version; } catch { return ''; } })();
-
-// Palette "splash" — coral del brand spinto verso oro/magenta (solo per il banner one-time)
-const SPLASH = ['#e63610', '#ff4017', '#ff7a2f', '#ffb84d', '#ff4d8d'];
-
-const lerpStops = (pts, t) => {
-  const seg = Math.min(Math.max(t, 0), 1) * (pts.length - 1);
-  const k = Math.min(Math.floor(seg), pts.length - 2);
-  const f = seg - k, a = pts[k], b = pts[k + 1];
-  return [0, 1, 2].map((j) => Math.round(a[j] + (b[j] - a[j]) * f));
-};
-
-// gradiente orizzontale su una riga (per il wordmark compatto)
-function gradient(text, stops = ['#ff4017', '#ff8a5c']) {
-  if (!COLOR) return text;
-  const pts = stops.map(hexRgb);
-  const chars = [...text];
-  const n = Math.max(chars.length - 1, 1);
-  return chars.map((ch, i) => { const [r, g, b] = lerpStops(pts, (i / n)); return fgRGB(r, g, b, ch); }).join('');
-}
-
-// gradiente DIAGONALE su un blocco ASCII-art (gli spazi restano trasparenti)
-function gradientArt(lines, stops = SPLASH) {
-  if (!COLOR) return lines.join('\n');
-  const pts = stops.map(hexRgb);
-  const H = Math.max(lines.length - 1, 1);
-  const W = Math.max(...lines.map((l) => l.length), 1);
-  return lines.map((line, y) => [...line].map((ch, x) => {
-    if (ch === ' ') return ch;
-    const [r, g, b] = lerpStops(pts, ((x / W) + (y / H)) / 2);
-    return fgRGB(r, g, b, ch);
-  }).join('')).join('\n');
-}
-
-// ASCII-art del wordmark (figlet: Slant / Small Slant). String.raw per preservare i backslash.
-const ART_SLANT = String.raw`
-        __                    ____
-  _____/ /__ _   _____  _____/ __ \____  _____
- / ___/ / _ \ | / / _ \/ ___/ / / / __ \/ ___/
-/ /__/ /  __/ |/ /  __/ /  / /_/ / /_/ (__  )
-\___/_/\___/|___/\___/_/   \____/ .___/____/
-                               /_/
-`.split('\n').slice(1, -1);
-
-const ART_SMALL = String.raw`
-      __                 ____
- ____/ /__ _  _____ ____/ __ \___  ___
-/ __/ / -_) |/ / -_) __/ /_/ / _ \(_-<
-\__/_/\__/|___/\__/_/  \____/ .__/___/
-                           /_/
-`.split('\n').slice(1, -1);
-
-function printBanner(det) {
-  const cols = process.stdout.columns || 80;
-  console.log();
-  if (COLOR && cols >= 50) console.log(gradientArt(ART_SLANT.map((l) => '  ' + l)));
-  else if (COLOR && cols >= 40) console.log(gradientArt(ART_SMALL.map((l) => '  ' + l)));
-  else console.log('  ' + bold(gradient('cleverOps')) + coral('_'));
-  console.log();
-  console.log('  ' + dim(`skill · agent · tool  ·  Claude Code & Codex${VERSION ? '  ·  v' + VERSION : ''}`));
-  if (det) {
-    const chip = (on, label) => (on ? coral('●') + ' ' + label : dim('○ ' + label));
-    console.log('  ' + dim('rilevati  ') + chip(det.claude, 'Claude Code') + '   ' + chip(det.codex, 'Codex'));
-  }
-  console.log();
-}
 
 // ---------- arg parsing (non interattivo) ----------
 function parseArgs(argv) {
@@ -219,28 +142,26 @@ function doUninstall({ targets, project, skills, agents }) {
 
 function runCcstatusline() {
   const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-  log.info('Avvio onboarding ccstatusline-gradient…');
+  console.log('\n› Avvio onboarding ccstatusline-gradient…');
   const r = spawnSync(npx, ['-y', 'ccstatusline-gradient@latest', '--onboard'], { stdio: 'inherit' });
-  if (r.status !== 0) log.warn('ccstatusline: onboarding non completato.');
+  if (r.status !== 0) console.warn('ccstatusline: onboarding non completato.');
 }
 
 function runToolbelt() {
-  if (process.platform === 'win32') { log.warn('Toolbelt: script non supportato su Windows; vedi skill ai-dev-toolbelt.'); return; }
+  if (process.platform === 'win32') { console.warn('Toolbelt: script non supportato su Windows; vedi skill ai-dev-toolbelt.'); return; }
   const script = join(PKG_ROOT, 'extras', 'toolbelt', 'install.sh');
-  if (!fs.existsSync(script)) { log.warn('Toolbelt: install.sh non trovato.'); return; }
-  log.info('Installo il toolbelt CLI (rg · fd · tree · ast-grep · gh)…');
+  if (!fs.existsSync(script)) { console.warn('Toolbelt: install.sh non trovato.'); return; }
+  console.log('\n› Installo il toolbelt CLI (rg · fd · tree · ast-grep · gh)…');
   const r = spawnSync('bash', [script], { stdio: 'inherit' });
-  if (r.status !== 0) log.warn('Toolbelt: installazione non completata (vedi output sopra).');
+  if (r.status !== 0) console.warn('Toolbelt: installazione non completata (vedi output sopra).');
 }
 
 function runImpeccable() {
   const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
-  log.info('Installo impeccable (design system, dipendenza esterna)…');
+  console.log('\n› Installo impeccable (design system, dipendenza esterna)…');
   const r = spawnSync(npx, ['-y', 'impeccable', 'install'], { stdio: 'inherit' });
-  if (r.status !== 0) log.warn('impeccable: installazione non completata.');
+  if (r.status !== 0) console.warn('impeccable: installazione non completata.');
 }
-
-const bail = (v) => { if (isCancel(v)) { cancel('Annullato.'); process.exit(0); } return v; };
 
 // ---------- non interattivo ----------
 function nonInteractive(args, uninstall) {
@@ -272,107 +193,36 @@ function skillHint(name) {
   } catch { return undefined; }
 }
 
-// ---------- interattivo ----------
+// ---------- interattivo (TUI Ink → bin/tui.mjs) ----------
 async function interactive(uninstall) {
   const det = detectHarness();
-  printBanner(det);
-  intro(uninstall ? 'rimozione' : 'installer');
+  const skills = listSkills().map((s) => ({ value: s, label: s, hint: skillHint(s) }));
+  const agents = listAgents().map((a) => ({ value: a, label: a.replace(/\.md$/, '') }));
 
-  // 1) COSA — skill, agent ed extra sono tutti scelte di prima classe
-  const skills = bail(await multiselect({
-    message: uninstall ? 'Quali skill rimuovere?' : 'Quali skill installare?',
-    options: listSkills().map(s => ({ value: s, label: s, hint: skillHint(s) })),
-    required: false,
-  }));
-  const agentOpts = listAgents();
-  const agents = agentOpts.length ? bail(await multiselect({
-    message: uninstall ? 'Quali agent rimuovere?' : 'Quali agent installare?',
-    options: agentOpts.map(a => ({ value: a, label: a.replace(/\.md$/, '') })),
-    required: false,
-  })) : [];
+  const { runWizard } = await import('./tui.mjs');
+  const pick = await runWizard({ skills, agents, det, isDev: IS_DEV_CHECKOUT, version: VERSION, uninstall });
+  if (!pick) { console.log('Annullato.'); return; }
 
-  // Extra / dipendenze esterne (binari e pacchetti, non skill) — solo in installazione
-  let extras = [];
-  if (!uninstall) {
-    extras = bail(await multiselect({
-      message: 'Extra — dipendenze esterne (opzionale)',
-      options: [
-        { value: 'toolbelt', label: 'Toolbelt CLI', hint: 'rg, fd, tree, ast-grep, gh' },
-        { value: 'ccstatusline', label: 'ccstatusline', hint: 'statusline per Claude Code' },
-        { value: 'impeccable', label: 'impeccable', hint: 'design system (npx)' },
-      ],
-      required: false,
-    }));
-  }
+  const project = process.cwd();
+  const needPlacement = pick.skills.length > 0 || pick.agents.length > 0;
 
-  if (!skills.length && !agents.length && !extras.length) { outro('Niente selezionato.'); return; }
-
-  // 2) DOVE + modalità — solo se ci sono skill/agent da posizionare (gli extra hanno il loro installer)
-  const needPlacement = skills.length > 0 || agents.length > 0;
-  let targets = [], project = process.cwd(), mode = 'copy';
   if (needPlacement) {
-    const preselect = [det.claude && 'claude', det.codex && 'codex'].filter(Boolean);
-    targets = bail(await multiselect({
-      message: 'Dove installo skill e agent?',
-      options: [
-        { value: 'claude', label: 'Claude Code (utente)', hint: det.claude ? '~/.claude · rilevato' : '~/.claude · non rilevato' },
-        { value: 'codex', label: 'Codex (utente)', hint: det.codex ? '~/.codex · rilevato' : '~/.codex · non rilevato' },
-        { value: 'project', label: 'Progetto', hint: 'cartella corrente → .claude/' },
-      ],
-      initialValues: preselect.length ? preselect : ['claude'],
-      required: true,
-    }));
-    if (targets.includes('project')) {
-      project = bail(await text({ message: 'Path del progetto', initialValue: process.cwd() }));
-    }
-    if (!uninstall) {
-      if (IS_DEV_CHECKOUT) {
-        mode = bail(await select({
-          message: 'Modalità',
-          options: [
-            { value: 'link', label: 'Symlink', hint: 'single-source: si aggiorna col repo (dev)' },
-            { value: 'copy', label: 'Copia', hint: 'file autonomi (hosting/standalone)' },
-          ],
-          initialValue: 'link',
-        }));
-      } else {
-        note('Eseguito via npx (cache effimera): installo in copia.\nPer i symlink, clona il repo ed esegui ./bin/cleverops.mjs.', 'Modalità');
-      }
-    }
-  }
-
-  // 3) RIEPILOGO + CONFERMA
-  const recap = [];
-  if (needPlacement) {
-    recap.push(`skill   ${skills.length ? skills.join(', ') : '—'}`);
-    recap.push(`agent   ${agents.length ? agents.map(a => a.replace(/\.md$/, '')).join(', ') : '—'}`);
-    recap.push(`dove    ${targets.join(', ')}${uninstall ? '' : `  ·  ${mode}`}`);
-  }
-  if (extras.length) recap.push(`extra   ${extras.join(', ')}`);
-  note(recap.join('\n'), uninstall ? 'Riepilogo rimozione' : 'Riepilogo');
-
-  const ok = bail(await confirm({ message: uninstall ? 'Procedo con la rimozione?' : "Procedo con l'installazione?" }));
-  if (!ok) { outro('Annullato.'); return; }
-
-  // 4) skill/agent
-  if (needPlacement) {
-    const s = spinner(); s.start(uninstall ? 'Rimozione…' : 'Installazione…');
     const results = uninstall
-      ? doUninstall({ targets, project, skills, agents })
-      : doInstall({ targets, project, mode, skills, agents });
-    s.stop(uninstall ? 'Rimozione completata' : 'Installazione completata');
-    note(results.join('\n'), 'Risultato');
-    if (!uninstall && skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
-      log.warn("La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
+      ? doUninstall({ targets: pick.targets, project, skills: pick.skills, agents: pick.agents })
+      : doInstall({ targets: pick.targets, project, mode: pick.mode, skills: pick.skills, agents: pick.agents });
+    console.log(results.join('\n'));
+    if (!uninstall && pick.skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
+      console.log("⚠ La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
     }
   }
 
-  // 5) extra — ognuno col proprio installer
-  if (extras.includes('toolbelt')) runToolbelt();
-  if (extras.includes('ccstatusline')) runCcstatusline();
-  if (extras.includes('impeccable')) runImpeccable();
+  if (!uninstall) {
+    if (pick.extras.includes('toolbelt')) runToolbelt();
+    if (pick.extras.includes('ccstatusline')) runCcstatusline();
+    if (pick.extras.includes('impeccable')) runImpeccable();
+  }
 
-  outro(coral('✓') + ' Fatto. Riavvia Claude Code / Codex per caricare le novità.');
+  console.log('\n✓ Fatto. Riavvia Claude Code / Codex per caricare le novità.');
 }
 
 // ---------- main ----------
