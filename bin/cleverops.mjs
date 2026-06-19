@@ -189,7 +189,7 @@ function skillHint(name) {
 async function interactive(uninstall) {
   intro(uninstall ? 'cleverOps — rimozione' : 'cleverOps — installer');
 
-  // 1) COSA — prima si sceglie cosa installare
+  // 1) COSA — skill, agent ed extra sono tutti scelte di prima classe
   const skills = bail(await multiselect({
     message: uninstall ? 'Quali skill rimuovere?' : 'Quali skill installare?',
     options: listSkills().map(s => ({ value: s, label: s, hint: skillHint(s) })),
@@ -202,68 +202,80 @@ async function interactive(uninstall) {
     required: false,
   })) : [];
 
-  if (!skills.length && !agents.length) { outro('Niente selezionato.'); return; }
-
-  // 2) DOVE — poi dove installarlo (skill installabili sia in Claude Code che Codex)
-  const targets = bail(await multiselect({
-    message: 'Dove installo?',
-    options: [
-      { value: 'claude', label: 'Claude Code (utente)', hint: '~/.claude' },
-      { value: 'codex', label: 'Codex (utente)', hint: '~/.codex' },
-      { value: 'project', label: 'Progetto', hint: 'cartella corrente → .claude/' },
-    ],
-    initialValues: ['claude', 'codex'],
-    required: true,
-  }));
-
-  let project = process.cwd();
-  if (targets.includes('project')) {
-    project = bail(await text({ message: 'Path del progetto', initialValue: process.cwd() }));
+  // Extra / dipendenze esterne (binari e pacchetti, non skill) — solo in installazione
+  let extras = [];
+  if (!uninstall) {
+    extras = bail(await multiselect({
+      message: 'Extra — dipendenze esterne (opzionale)',
+      options: [
+        { value: 'toolbelt', label: 'Toolbelt CLI', hint: 'rg, fd, tree, ast-grep, gh' },
+        { value: 'ccstatusline', label: 'ccstatusline', hint: 'statusline per Claude Code' },
+        { value: 'impeccable', label: 'impeccable', hint: 'design system (npx)' },
+      ],
+      required: false,
+    }));
   }
 
-  // 3) MODALITÀ
-  let mode = 'copy';
-  if (!uninstall) {
-    if (IS_DEV_CHECKOUT) {
-      mode = bail(await select({
-        message: 'Modalità',
-        options: [
-          { value: 'link', label: 'Symlink', hint: 'single-source: si aggiorna col repo (dev)' },
-          { value: 'copy', label: 'Copia', hint: 'file autonomi (hosting/standalone)' },
-        ],
-        initialValue: 'link',
-      }));
-    } else {
-      note('Eseguito via npx (cache effimera): installo in copia.\nPer i symlink, clona il repo ed esegui ./bin/cleverops.mjs.', 'Modalità');
+  if (!skills.length && !agents.length && !extras.length) { outro('Niente selezionato.'); return; }
+
+  // 2) DOVE + modalità — solo se ci sono skill/agent da posizionare (gli extra hanno il loro installer)
+  const needPlacement = skills.length > 0 || agents.length > 0;
+  let targets = [], project = process.cwd(), mode = 'copy';
+  if (needPlacement) {
+    targets = bail(await multiselect({
+      message: 'Dove installo skill e agent?',
+      options: [
+        { value: 'claude', label: 'Claude Code (utente)', hint: '~/.claude' },
+        { value: 'codex', label: 'Codex (utente)', hint: '~/.codex' },
+        { value: 'project', label: 'Progetto', hint: 'cartella corrente → .claude/' },
+      ],
+      initialValues: ['claude', 'codex'],
+      required: true,
+    }));
+    if (targets.includes('project')) {
+      project = bail(await text({ message: 'Path del progetto', initialValue: process.cwd() }));
+    }
+    if (!uninstall) {
+      if (IS_DEV_CHECKOUT) {
+        mode = bail(await select({
+          message: 'Modalità',
+          options: [
+            { value: 'link', label: 'Symlink', hint: 'single-source: si aggiorna col repo (dev)' },
+            { value: 'copy', label: 'Copia', hint: 'file autonomi (hosting/standalone)' },
+          ],
+          initialValue: 'link',
+        }));
+      } else {
+        note('Eseguito via npx (cache effimera): installo in copia.\nPer i symlink, clona il repo ed esegui ./bin/cleverops.mjs.', 'Modalità');
+      }
     }
   }
 
-  // 4) CONFERMA
-  const ok = bail(await confirm({
-    message: `${uninstall ? 'Rimuovo' : 'Installo'} ${skills.length} skill + ${agents.length} agent su [${targets.join(', ')}]${uninstall ? '' : ` (${mode})`}?`,
-  }));
+  // 3) CONFERMA
+  const parts = [];
+  if (needPlacement) parts.push(`${skills.length} skill + ${agents.length} agent → [${targets.join(', ')}]${uninstall ? '' : ` (${mode})`}`);
+  if (extras.length) parts.push(`extra: ${extras.join(', ')}`);
+  const ok = bail(await confirm({ message: `${uninstall ? 'Rimuovo' : 'Installo'} ${parts.join(' · ')}?` }));
   if (!ok) { outro('Annullato.'); return; }
 
-  const s = spinner(); s.start(uninstall ? 'Rimozione…' : 'Installazione…');
-  const results = uninstall
-    ? doUninstall({ targets, project, skills, agents })
-    : doInstall({ targets, project, mode, skills, agents });
-  s.stop(uninstall ? 'Rimozione completata' : 'Installazione completata');
-  note(results.join('\n'), 'Risultato');
-
-  if (!uninstall && skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
-    log.warn("La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
+  // 4) skill/agent
+  if (needPlacement) {
+    const s = spinner(); s.start(uninstall ? 'Rimozione…' : 'Installazione…');
+    const results = uninstall
+      ? doUninstall({ targets, project, skills, agents })
+      : doInstall({ targets, project, mode, skills, agents });
+    s.stop(uninstall ? 'Rimozione completata' : 'Installazione completata');
+    note(results.join('\n'), 'Risultato');
+    if (!uninstall && skills.includes('transcribe') && !fs.existsSync(join(HOME, '.whisper-env'))) {
+      log.warn("La skill 'transcribe' richiede l'env Python ~/.whisper-env con Whisper (assente).");
+    }
   }
-  if (!uninstall) {
-    const cc = bail(await confirm({ message: 'Installare anche ccstatusline-gradient (statusline AI)?', initialValue: false }));
-    if (cc) runCcstatusline();
 
-    const tb = bail(await confirm({ message: 'Installare il toolbelt CLI (rg, fd, tree, ast-grep, gh)?', initialValue: false }));
-    if (tb) runToolbelt();
+  // 5) extra — ognuno col proprio installer
+  if (extras.includes('toolbelt')) runToolbelt();
+  if (extras.includes('ccstatusline')) runCcstatusline();
+  if (extras.includes('impeccable')) runImpeccable();
 
-    const imp = bail(await confirm({ message: 'Installare impeccable (design system, dipendenza esterna)?', initialValue: false }));
-    if (imp) runImpeccable();
-  }
   outro('Fatto. Riavvia Claude Code per caricare le novità.');
 }
 
