@@ -39,12 +39,19 @@ l'interprete dedicato `~/.whisper-env/bin/python` (Whisper preinstallato).
 |---|---|
 | `--format md` | output Markdown con intestazione (file, modello, durata) |
 | `--timestamps` | prefissa ogni paragrafo con `[mm:ss]` |
-| `--model large` | qualità maggiore, più lento (default `medium`) |
+| `--model turbo` | **consigliato**: qualità quasi-`large` ma leggero (alias di `large-v3-turbo`), niente download da 2.88 GB |
+| `--model MODELLO` | `tiny`/`base`/`small`/`medium`/`large`/`large-v2`/`large-v3`/`turbo`. Default `medium`. `large` è il più accurato ma pesante (download ~2.88 GB) |
+| `--list-models` | elenca i modelli disponibili segnando quali sono già in cache, ed esce |
 | `--language en` | lingua diversa dall'italiano (default `it`) |
 | `--raw` | testo grezzo Whisper senza pulizia/segmentazione |
 | `--output PATH` | percorso file di output personalizzato |
 | `--device cuda` | forza la GPU (errore se non disponibile, niente fallback su CPU) |
 | `--device cpu` | forza la CPU |
+
+**Scelta del modello:** se non sai quale usare, parti da `turbo` — è quasi
+alla pari di `large` in qualità ma molto più leggero da scaricare e veloce.
+Usa `large`/`large-v3` solo se serve la massima accuratezza e sei disposto al
+download grande. Controlla cosa è già pronto in locale con `--list-models`.
 
 Lo `stdout` dello script è **solo il path** del file prodotto (i messaggi
 di avanzamento vanno su stderr), così è componibile in pipeline.
@@ -63,3 +70,14 @@ iniziare — così si verifica a colpo d'occhio se sta girando su GPU.
   e poi chiedi esplicitamente un riassunto.
 - Per call con più interlocutori Whisper non separa gli speaker: se serve
   la diarizzazione, segnalalo all'utente (richiede un tool dedicato).
+- **Download dei modelli protetto da timeout/anti-stallo:** se il modello
+  richiesto non è già nella cache (`~/.cache/whisper`, rispettando
+  `XDG_CACHE_HOME`) lo script lo scarica con timeout di connessione e un
+  watchdog che aborta se la connessione si pianta o resta troppo lenta
+  (sotto ~50 KiB/s per oltre 30s, o nessun dato per 30s). Così un download
+  lento non lascia più il processo appeso per ore. Il file viene scritto su
+  `.part` e rinominato solo a download completo e verificato (SHA256).
+- Se il download fallisce, lo script **non** ripiega silenziosamente su un
+  altro modello: esce con un errore che elenca i modelli già in cache e ne
+  suggerisce uno (es. `--model turbo`). Usa `--list-models` per vedere cosa è
+  già scaricato prima di lanciare una trascrizione lunga.
