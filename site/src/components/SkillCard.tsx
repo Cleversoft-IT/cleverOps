@@ -1,4 +1,5 @@
 import { CommandBlock } from "./CommandBlock";
+import { HarnessBadge } from "./HarnessBadge";
 import type { Skill } from "@/lib/skills";
 
 export function SkillCard({ skill }: { skill: Skill }) {
@@ -15,13 +16,7 @@ export function SkillCard({ skill }: { skill: Skill }) {
         </span>
         <span className="flex items-center gap-1.5">
           {skill.targets.map((t) => (
-            <span
-              key={t}
-              className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]"
-              title={t === "claude" ? "Si installa in Claude Code" : "Si installa in Codex"}
-            >
-              {t === "claude" ? "Claude Code" : "Codex"}
-            </span>
+            <HarnessBadge key={t} target={t} />
           ))}
           {skill.legacy && (
             <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
