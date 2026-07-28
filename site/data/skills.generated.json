@@ -1,7 +1,7 @@
 {
   "repo": "Cleversoft-IT/cleverOps",
   "counts": {
-    "skills": 11,
+    "skills": 12,
     "agents": 1
   },
   "categories": [
@@ -18,6 +18,10 @@
       "description": "Vecchio design system Cleversoft/akkaz incentrato sul profilo personale akkaz. Per nuovo lavoro di brand Cleversoft usa la skill cleversoft-design-system. Questa resta solo per retrocompatibilità.",
       "category": "Design",
       "legacy": true,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills cleversoft-design"
     },
     {
@@ -25,6 +29,10 @@
       "description": "Design system aziendale di Cleversoft (software house, Valle Camonica). Usa questa skill quando crei o revisioni interfacce, siti, landing, preventivi, mockup, screenshot, asset visivi, copy o prototipi che devono rispettare l'identità visiva Cleversoft. Formato compatibile impeccable (PRODUCT.md + DESIGN.md).",
       "category": "Design",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills cleversoft-design-system"
     },
     {
@@ -32,6 +40,10 @@
       "description": "DDEV local development expertise. Use when working with DDEV projects, containers, configuration, or troubleshooting DDEV environments.",
       "category": "Drupal",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills ddev-expert"
     },
     {
@@ -39,6 +51,10 @@
       "description": "Custom Docker Compose local development patterns. Use when working with Docker-based local environments, container configuration, or troubleshooting Docker setups.",
       "category": "DevOps",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills docker-local"
     },
     {
@@ -46,6 +62,10 @@
       "description": "Drupal 10/11 development expertise. Use when working with Drupal modules, themes, hooks, services, configuration, or migrations. Triggers on mentions of Drupal, Drush, Twig, modules, themes, or Drupal API.",
       "category": "Drupal",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills drupal-expert"
     },
     {
@@ -53,6 +73,10 @@
       "description": "Drupal migration expertise. Use when working with D7-to-D10 migrations, CSV imports, JSON API imports, or custom migration plugins.",
       "category": "Drupal",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills drupal-migration"
     },
     {
@@ -60,6 +84,10 @@
       "description": "Drupal security expertise. Auto-activates when writing forms, controllers, queries, or handling user input. Prevents XSS, SQL injection, and access bypass vulnerabilities.",
       "category": "Drupal",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills drupal-security"
     },
     {
@@ -67,6 +95,10 @@
       "description": "Create distinctive, production-grade frontend interfaces with high design quality. Use this skill when the user asks to build web components, pages, artifacts, posters, or applications (examples include websites, landing pages, dashboards, React components, HTML/CSS layouts, or when styling/beautifying any web UI). Generates creative, polished code and UI design that avoids generic AI aesthetics.",
       "category": "Design",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills frontend-design"
     },
     {
@@ -74,6 +106,10 @@
       "description": "Ionic Capacitor mobile app development with Angular, React, or Vue. RevenueCat payments, AdMob ads, i18n localization, onboarding flow, paywall, and Ionic Tabs navigation.",
       "category": "Mobile",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills ionic-skills"
     },
     {
@@ -81,13 +117,30 @@
       "description": "Audit software implementation plans produced by coding agents before execution, and optionally audit implemented changes against an approved plan after execution. Use when the user asks to review, verify, audit, validate, improve, re-check, iterate on, or run an external check on a development plan or its implementation, especially Claude Code Markdown plans in .claude/plans or ~/.claude/plans, Codex plans, repo-local plans/ directories, PLAN.md files, roadmap/ticket implementation plans, Drupal implementation plans, \"latest plan\" requests, or post-implementation plan compliance checks.",
       "category": "Workflow",
       "legacy": false,
-      "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills plan-auditor"
+      "targets": [
+        "codex"
+      ],
+      "command": "npx github:Cleversoft-IT/cleverOps --target codex --skills plan-auditor"
+    },
+    {
+      "name": "subagent-dev-with-codex",
+      "description": "Use when entering plan mode, planning a multi-step development or refactor task, or orchestrating subagent-driven development where GPT-5.6 (via the local Codex CLI on the ChatGPT flat plan) participates alongside Anthropic models. Triggers on plan mode, breaking work into subagents, orchestrating an implementation, or wanting a cross-model audit or second opinion.",
+      "category": "Workflow",
+      "legacy": false,
+      "targets": [
+        "claude"
+      ],
+      "command": "npx github:Cleversoft-IT/cleverOps --target claude --skills subagent-dev-with-codex"
     },
     {
       "name": "transcribe",
       "description": "Trascrive file audio (mp3, wav, m4a, mp4...) in testo con Whisper locale, ripulendo e formattando il risultato in paragrafi leggibili. Usa quando l'utente vuole trascrivere un file audio, una registrazione vocale o una call con un cliente.",
       "category": "AI",
       "legacy": false,
+      "targets": [
+        "claude",
+        "codex"
+      ],
       "command": "npx github:Cleversoft-IT/cleverOps --target claude,codex --skills transcribe"
     }
   ],

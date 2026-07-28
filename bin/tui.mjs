@@ -43,7 +43,7 @@ function MultiSelect({ title, items, initial = [], filterable = false, onSubmit 
 
   const filtered = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    return q ? items.filter((it) => (it.label + ' ' + (it.hint || '')).toLowerCase().includes(q)) : items;
+    return q ? items.filter((it) => (it.label + ' ' + (it.tag || '') + ' ' + (it.hint || '')).toLowerCase().includes(q)) : items;
   }, [filter, items]);
 
   const cur = filtered.length ? Math.min(cursor, filtered.length - 1) : 0;
@@ -82,6 +82,7 @@ function MultiSelect({ title, items, initial = [], filterable = false, onSubmit 
               h(Text, { color: BRAND }, active ? '› ' : '  '),
               h(Text, { color: on ? BRAND : undefined, dimColor: !on }, on ? '◼ ' : '◻ '),
               h(Text, { bold: active, color: on ? BRAND : undefined }, it.label),
+              it.tag ? h(Text, { color: 'cyan' }, ' ⟨' + it.tag + '⟩') : null,
               it.hint ? h(Text, { dimColor: true }, '  ' + it.hint) : null,
             );
           })),

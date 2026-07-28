@@ -11,7 +11,7 @@
 
 **La toolbox AI/DevOps di Cleversoft IT** · _una sola fonte, condivisa tra Claude Code e Codex_
 
-![skills](https://img.shields.io/badge/skills-11-ff4017?style=flat-square)
+![skills](https://img.shields.io/badge/skills-12-ff4017?style=flat-square)
 ![agents](https://img.shields.io/badge/agents-1-ff4017?style=flat-square)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-✓-blue?style=flat-square)
 ![Codex](https://img.shields.io/badge/Codex-✓-blue?style=flat-square)
@@ -72,6 +72,7 @@ Niente clone, niente registry pubblico — gira dal repo privato con la tua chia
 | Skill | In una riga |
 |---|---|
 | `plan-auditor` | Revisiona i piani di implementazione *prima* di scrivere codice |
+| `subagent-dev-with-codex` | Loop di pianificazione cross-model: Claude scrive il piano, GPT-5.6 lo audita |
 | `transcribe` | Audio → testo con Whisper locale (GPU), ripulito e impaginato |
 
 ### 🟩 DevOps & Frontend
@@ -147,6 +148,16 @@ skill nel dettaglio, le opzioni avanzate e la struttura del repo.
   risolti/superati) e sezione dedicata a Drupal. Può anche auditare le
   modifiche *implementate* rispetto al piano approvato. Include
   `agents/openai.yaml` per usarlo da Codex.
+- **`subagent-dev-with-codex`** — l'altra metà del loop, lato Claude Code:
+  in plan mode **il modello principale scrive il piano** e, se è sostanzioso,
+  lo fa **auditare a GPT-5.6** (Codex CLI + `plan-auditor`) in un loop
+  audit → revisione → re-audit fino a verdetto `go` (max 3 round), prima di
+  presentarlo. In esecuzione GPT-5.6 diventa uno dei worker disponibili;
+  la scelta dei worker e della politica di review **la decide l'utente**
+  (una domanda una tantum via AskUserQuestion, persistibile nel CLAUDE.md
+  di progetto). Include le ricette anti-stallo per chiamare Codex in
+  background senza perdere l'output. Richiede `plan-auditor` installato
+  in `~/.codex/skills/`.
 - **`transcribe`** — audio (mp3, wav, m4a, mp4…) → testo con **Whisper**
   locale. Non un blob grezzo: segmenta in paragrafi sulle pause, ripulisce
   (filler "ehm/uhm", spazi, punteggiatura, maiuscole), esporta in `txt` o `md`

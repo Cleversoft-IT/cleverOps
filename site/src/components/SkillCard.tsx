@@ -13,11 +13,22 @@ export function SkillCard({ skill }: { skill: Skill }) {
           <span className="h-1 w-1 shrink-0 rounded-full bg-brand" aria-hidden />
           {skill.category}
         </span>
-        {skill.legacy && (
-          <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
-            legacy
-          </span>
-        )}
+        <span className="flex items-center gap-1.5">
+          {skill.targets.map((t) => (
+            <span
+              key={t}
+              className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]"
+              title={t === "claude" ? "Si installa in Claude Code" : "Si installa in Codex"}
+            >
+              {t === "claude" ? "Claude Code" : "Codex"}
+            </span>
+          ))}
+          {skill.legacy && (
+            <span className="rounded-md border border-[var(--border)] px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-[var(--muted-foreground)]">
+              legacy
+            </span>
+          )}
+        </span>
       </div>
 
       <h3 className="mt-4 font-mono text-lg font-semibold tracking-[-0.01em] text-[var(--card-foreground)]">

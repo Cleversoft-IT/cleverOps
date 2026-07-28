@@ -5,6 +5,7 @@ export type Skill = {
   description: string;
   category: string;
   legacy: boolean;
+  targets: string[];
   command: string;
 };
 

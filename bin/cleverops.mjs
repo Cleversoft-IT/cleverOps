@@ -20,6 +20,19 @@ const IS_DEV_CHECKOUT = fs.existsSync(join(PKG_ROOT, '.git'));
 
 const listSkills = () => fs.existsSync(SKILLS_DIR)
   ? fs.readdirSync(SKILLS_DIR, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name).sort() : [];
+
+// Harness di destinazione della skill: frontmatter `targets: claude|codex` (assente = entrambi).
+function skillTargets(name) {
+  try {
+    const md = fs.readFileSync(join(SKILLS_DIR, name, 'SKILL.md'), 'utf8');
+    const fm = (md.match(/^---\r?\n([\s\S]*?)\r?\n---/) || [])[1] || '';
+    const m = fm.match(/^targets:\s*(.+)$/m);
+    if (!m) return ['claude', 'codex'];
+    const t = m[1].trim().replace(/^["']|["']$/g, '').split(',').map(s => s.trim()).filter(Boolean);
+    return t.length ? t : ['claude', 'codex'];
+  } catch { return ['claude', 'codex']; }
+}
+const HARNESS_LABEL = { claude: 'Claude Code', codex: 'Codex' };
 const listAgents = () => fs.existsSync(AGENTS_DIR)
   ? fs.readdirSync(AGENTS_DIR).filter(f => f.endsWith('.md')).sort() : [];
 
@@ -73,6 +86,8 @@ Uso:
 
 Flag (provisioning non interattivo — basta passarne uno):
   --target claude,codex,project   dove installare (default skill: claude,codex)
+                                  le skill con harness dedicato (frontmatter targets:)
+                                  vengono installate solo nei target compatibili
   --project PATH                  cartella progetto (per target project; default cwd)
   --copy | --link                 copia (default via npx) o symlink (solo da checkout git)
   --all                           tutte le skill e gli agent
@@ -109,6 +124,13 @@ function doInstall({ targets, project, mode, skills, agents }) {
     for (const s of skills) {
       const src = join(SKILLS_DIR, s);
       if (!fs.existsSync(src)) { results.push(`✗ skill inesistente: ${s}`); continue; }
+      // Il target 'project' è la .claude/ del progetto → harness Claude Code.
+      const harness = t === 'codex' ? 'codex' : 'claude';
+      const st = skillTargets(s);
+      if (!st.includes(harness)) {
+        results.push(`↷ [${t}] skills/${s} saltata — solo ${st.map(x => HARNESS_LABEL[x] || x).join(' & ')}`);
+        continue;
+      }
       const bak = place(src, join(dirs.skills, s), mode);
       results.push(`✓ [${t}] skills/${s}${bak ? `  (backup: ${bak})` : ''}`);
     }
@@ -196,7 +218,11 @@ function skillHint(name) {
 // ---------- interattivo (TUI Ink → bin/tui.mjs) ----------
 async function interactive(uninstall) {
   const det = detectHarness();
-  const skills = listSkills().map((s) => ({ value: s, label: s, hint: skillHint(s) }));
+  const skills = listSkills().map((s) => {
+    const st = skillTargets(s);
+    // Tag mostrato solo per le skill con harness dedicato (default: entrambi, niente rumore).
+    return { value: s, label: s, tag: st.length === 1 ? HARNESS_LABEL[st[0]] : undefined, hint: skillHint(s) };
+  });
   const agents = listAgents().map((a) => ({ value: a, label: a.replace(/\.md$/, '') }));
 
   const project = process.cwd();

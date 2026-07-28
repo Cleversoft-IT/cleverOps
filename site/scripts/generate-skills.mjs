@@ -27,6 +27,7 @@ const CATEGORY = {
   "ionic-skills": "Mobile",
   "transcribe": "AI",
   "plan-auditor": "Workflow",
+  "subagent-dev-with-codex": "Workflow",
   "frontend-design": "Design",
   "cleversoft-design": "Design",
   "cleversoft-design-system": "Design",
@@ -64,12 +65,15 @@ function readSkill(name) {
   if (!fs.existsSync(file)) return null;
   const fm = parseFrontmatter(fs.readFileSync(file, "utf8"));
   const description = (fm.description || "").replace(/^\[LEGACY[^\]]*\]\s*/i, "").trim();
+  // Harness di destinazione: frontmatter `targets: claude|codex` (assente = entrambi).
+  const targets = (fm.targets || SKILL_TARGETS).split(",").map((t) => t.trim()).filter(Boolean);
   return {
     name,
     description,
     category: CATEGORY[name] || "Altro",
     legacy: LEGACY.has(name) || /\blegacy\b/i.test(fm.description || ""),
-    command: `npx github:${REPO} --target ${SKILL_TARGETS} --skills ${name}`,
+    targets,
+    command: `npx github:${REPO} --target ${targets.join(",")} --skills ${name}`,
   };
 }
 
